@@ -3,7 +3,7 @@
 # Log all output to a log file (stdout and stderr)
 mkdir -p slurm/slurm_output/main
 start_time_formatted=$(date +%Y%m%d_%H%M%S)
-log_file="slurm/slurm_output/main/preprocessing-${start_time_formatted}.log"
+log_file="slurm/slurm_output/main/phenotype-${start_time_formatted}.log"
 exec > >(tee -a "$log_file") 2>&1
 
 # Start timing
@@ -29,7 +29,13 @@ for PLATE in $(seq 1 $NUM_PLATES); do
         --configfile "config/config.yml" \
         --rerun-triggers mtime \
         --keep-going \
-        --until all_preprocess \
+        --groups apply_ic_field_phenotype=phenotype_tile_group \
+                align_phenotype=phenotype_tile_group \
+                segment_phenotype=phenotype_tile_group \
+                extract_phenotype_info=phenotype_tile_group \
+                identify_cytoplasm=phenotype_tile_group \
+                extract_phenotype_cp=phenotype_tile_group \
+        --until all_phenotype \
         --config plate_filter=$PLATE
 
     # Check if Snakemake was successful
