@@ -30,3 +30,24 @@ preprocess:
   phenotype_n_z_planes: 1
   phenotype_metadata_samples_df_fp: config/phenotype_metadata_samples.tsv
   sample_fraction: 0.1
+phenotype:
+  foci_channel_index: null
+  channel_names:
+  - Hoescht
+  - COX4
+  - AGP
+  - ConA
+  align: null
+  dapi_index: 0
+  cyto_index: 2
+  segmentation_method: cellpose
+  reconcile: contained_in_cells
+  gpu: false
+  cp_method: cp_multichannel
+  nuclei_diameter: 37.25360132569531
+  cell_diameter: 67.31611383584443
+  nuclei_flow_threshold: 0.4
+  nuclei_cellprob_threshold: 0.0
+  cell_flow_threshold: 1
+  cell_cellprob_threshold: 0
+  cellpose_model: cyto3
