@@ -24,7 +24,7 @@ for PLATE in $(seq 1 $NUM_PLATES); do
     plate_start_time=$(date +%s)
 
     # Run Snakemake with plate filter for this plate
-    snakemake --use-conda --cores all \
+    snakemake --use-conda --cores 200 \
         --snakefile "../brieflow/workflow/Snakefile" \
         --configfile "config/config.yml" \
         --rerun-triggers mtime \
