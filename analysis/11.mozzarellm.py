@@ -32,10 +32,10 @@ DEFAULT_OUTPUT_DIR = "brieflow_output/cluster/Hoescht_COX4_AGP_ConA/all/filtered
 # Screen context for OPS data
 SCREEN_CONTEXT = """
 These clusters are from an optical pooled screen (OPS) that measured morphological
-phenotypes in human cells. The screen involved perturbing genes using CRISPR and
-imaging the resulting cellular morphology via fluorescence microscopy stains of
-Hoechst (nucleus), COX4 (mitochondria), AGP (Golgi), and ConA (endoplasmic reticulum).
-Genes in each cluster were identified based on similar morphological phenotypes.
+phenotypes in human cells. The screen involved perturbing genes using CRISPR knockout
+system and imaging the resulting cellular morphology via fluorescence microscopy adapted
+from the cell-painting panel, specifically: stains of Hoechst (nucleus), 
+COX4 (mitochondria), AGP (actin/golgi/plasma membrane), and ConA (endoplasmic reticulum).
 Genes grouped within a cluster tend to exhibit similar phenotypes, suggesting they
 may participate in the same biological process or pathway.
 """
