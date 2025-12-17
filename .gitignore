@@ -5,3 +5,9 @@ analysis/brieflow_output/
 
 # param_* subfolders in analysis
 analysis/param_*/
+
+# dotenv
+analysis/.env
+
+# debug logs
+analysis/debug/

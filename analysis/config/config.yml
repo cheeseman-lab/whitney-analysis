@@ -976,3 +976,19 @@ aggregate:
     olfactory_receptors:
       pattern: ^nontargeting_or_
       constructs_per_pseudogene: 2
+cluster:
+  min_cell_cutoffs:
+    all: 10
+  phate_distance_metric: cosine
+  perturbation_auc_threshold: null
+  uniprot_data_fp: config/benchmark_clusters/uniprot_data.tsv
+  string_pair_benchmark_fp: config/benchmark_clusters/string_pair_benchmark.tsv
+  corum_group_benchmark_fp: config/benchmark_clusters/corum_group_benchmark.tsv
+  kegg_group_benchmark_fp: config/benchmark_clusters/kegg_group_benchmark.tsv
+  standard_clustering:
+    enabled: true
+    cluster_combo_fp: config/cluster_combo.tsv
+  filtered_clustering:
+    enabled: true
+    cluster_filtered_combo_fp: config/cluster_filtered_combo.tsv
+    significant_genes_fp: config/significant_genes.tsv
