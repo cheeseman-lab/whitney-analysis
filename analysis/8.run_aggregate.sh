@@ -10,7 +10,7 @@ exec > >(tee -a "$log_file") 2>&1
 start_time=$(date +%s)
 
 # Run the aggregate rules
-snakemake --use-conda --cores all \
+snakemake --use-conda --cores 350 \
     --snakefile "../brieflow/workflow/Snakefile" \
     --configfile "config/config.yml" \
     --rerun-triggers mtime \

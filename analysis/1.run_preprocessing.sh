@@ -15,7 +15,7 @@ NUM_PLATES=2
 echo "===== STARTING SEQUENTIAL PROCESSING OF $NUM_PLATES PLATES ====="
 
 # Process each plate in sequence
-for PLATE in $(seq 1 $NUM_PLATES); do
+for PLATE in 2; do
     echo ""
     echo "==================== PROCESSING PLATE $PLATE ===================="
     echo "Started at: $(date)"

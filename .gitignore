@@ -2,3 +2,6 @@
 analysis/.snakemake/
 analysis/slurm/slurm_output/
 analysis/brieflow_output/
+
+# param_* subfolders in analysis
+analysis/param_*/

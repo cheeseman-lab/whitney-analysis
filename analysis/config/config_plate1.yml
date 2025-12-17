@@ -1,0 +1,332 @@
+
+# ~BrieFlow analysis configuration file~
+
+# All paths are resolved relative to the directory the workflow is run from.
+
+# Parameters:
+all:
+  root_fp: brieflow_output/
+preprocess:
+  sbs_samples_fp: config/sbs_samples.tsv
+  sbs_combo_fp: config/sbs_combo.tsv
+  phenotype_samples_fp: config/phenotype_samples.tsv
+  phenotype_combo_fp: config/phenotype_combo.tsv
+  sbs_data_format: tiff
+  sbs_data_organization: tile
+  sbs_channel_order:
+  - 405_nm_Ex
+  - 561_nm_Ex_-_1
+  - 561_nm_Ex_-_2
+  - 638_nm_Ex_-_1
+  - 638_nm_Ex_-_2
+  sbs_channel_order_flip: false
+  sbs_n_z_planes: 1
+  sbs_metadata_samples_df_fp: config/sbs_metadata_samples.tsv
+  phenotype_data_format: tiff
+  phenotype_data_organization: tile
+  phenotype_channel_order:
+  - 405_nm
+  - 488_nm
+  - 561_nm
+  - 638_nm
+  phenotype_channel_order_flip: false
+  phenotype_round_order:
+  - 1
+  phenotype_n_z_planes: 1
+  phenotype_metadata_samples_df_fp: config/phenotype_metadata_samples.tsv
+  sample_fraction: 0.1
+phenotype:
+  foci_channel_index: null
+  channel_names:
+  - Hoescht
+  - COX4
+  - AGP
+  - ConA
+  align: null
+  dapi_index: 0
+  cyto_index: 2
+  segmentation_method: cellpose
+  reconcile: contained_in_cells
+  gpu: false
+  cp_method: cp_multichannel
+  nuclei_diameter: 37.25360132569531
+  cell_diameter: 67.31611383584443
+  nuclei_flow_threshold: 0.4
+  nuclei_cellprob_threshold: 0.0
+  cell_flow_threshold: 1
+  cell_cellprob_threshold: 0
+  cellpose_model: cyto3
+sbs:
+  alignment_method: sbs_mean_rotation
+  channel_names:
+  - DAPI
+  - G
+  - T
+  - A
+  - C
+  upsample_factor: 8
+  window: 16
+  skip_cycles_indices: null
+  manual_background_cycle_index: null
+  manual_channel_mapping: null
+  extra_channel_indices:
+  - 0
+  max_filter_width: 3
+  spot_detection_method: standard
+  dapi_cycle: 2
+  dapi_cycle_index: 1
+  cyto_cycle: 12
+  cyto_cycle_index: 11
+  dapi_index: 0
+  cyto_index: 3
+  segmentation_method: cellpose
+  gpu: false
+  reconcile: contained_in_cells
+  segment_cells: true
+  df_barcode_library_fp: config/barcode_library.tsv
+  threshold_peaks: 125
+  call_reads_method: percentile
+  bases:
+  - G
+  - T
+  - A
+  - C
+  q_min: 0
+  error_correct: true
+  sort_calls: peak
+  barcode_type: simple
+  max_distance: 2
+  manual_cycle_offsets:
+    1:
+      A1:
+        0:
+        - 0
+        - 0
+        1:
+        - 94
+        - 38
+        2:
+        - -32
+        - -27
+        3:
+        - 61
+        - -49
+        4:
+        - 65
+        - -37
+        5:
+        - 73
+        - -32
+        6:
+        - 79
+        - -37
+        7:
+        - 77
+        - -30
+        8:
+        - 72
+        - -30
+        9:
+        - 70
+        - -30
+        10:
+        - 70
+        - -30
+        11:
+        - 72
+        - -30
+      A2:
+        0:
+        - 0
+        - 0
+        1:
+        - 80
+        - 45
+        2:
+        - 13
+        - -26
+        3:
+        - 47
+        - -37
+        4:
+        - 50
+        - -27
+        5:
+        - 53
+        - -22
+        6:
+        - 59
+        - -26
+        7:
+        - 59
+        - -20
+        8:
+        - 59
+        - -23
+        9:
+        - 59
+        - -23
+        10:
+        - 59
+        - -23
+        11:
+        - 59
+        - -23
+      A3:
+        0:
+        - 0
+        - 0
+        1:
+        - 51
+        - 43
+        2:
+        - 166
+        - 94
+        3:
+        - 64
+        - -2
+        4:
+        - 9
+        - -19
+        5:
+        - 28
+        - -16
+        6:
+        - 28
+        - -18
+        7:
+        - 28
+        - -19
+        8:
+        - 199
+        - 98
+        9:
+        - 38
+        - -7
+        10:
+        - 29
+        - -15
+        11:
+        - 28
+        - -16
+      B1:
+        0:
+        - 0
+        - 0
+        1:
+        - 105
+        - 77
+        2:
+        - 480
+        - 222
+        3:
+        - 107
+        - -1
+        4:
+        - 85
+        - 5
+        5:
+        - 91
+        - 13
+        6:
+        - 109
+        - 14
+        7:
+        - 99
+        - 18
+        8:
+        - 127
+        - 21
+        9:
+        - 120
+        - 20
+        10:
+        - 118
+        - 25
+        11:
+        - 118
+        - 25
+      B2:
+        0:
+        - 0
+        - 0
+        1:
+        - 75
+        - 80
+        2:
+        - 396
+        - 322
+        3:
+        - 169
+        - 97
+        4:
+        - 54
+        - 18
+        5:
+        - 63
+        - 22
+        6:
+        - 72
+        - 30
+        7:
+        - 65
+        - 24
+        8:
+        - 436
+        - 337
+        9:
+        - 96
+        - 38
+        10:
+        - 76
+        - 35
+        11:
+        - 76
+        - 35
+      B3:
+        0:
+        - 0
+        - 0
+        1:
+        - 45
+        - 80
+        2:
+        - 159
+        - 407
+        3:
+        - 59
+        - 134
+        4:
+        - 15
+        - 28
+        5:
+        - 24
+        - 30
+        6:
+        - 28
+        - 33
+        7:
+        - 25
+        - 29
+        8:
+        - 197
+        - 456
+        9:
+        - 38
+        - 77
+        10:
+        - 22
+        - 42
+        11:
+        - 22
+        - 42
+  barcode_col: sgRNA
+  prefix_col: prefix
+  peak_width: 17
+  nuclei_diameter: 9.373021315815206
+  cell_diameter: 22.22649192646566
+  nuclei_flow_threshold: 0.4
+  nuclei_cellprob_threshold: 0.0
+  cell_flow_threshold: 1
+  cell_cellprob_threshold: 0
+  cellpose_model: cyto3
