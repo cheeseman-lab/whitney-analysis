@@ -1,6 +1,6 @@
 # Brieflow Output Assessment Report
 
-**Output Directory:** `analysis/brieflow_output`
+**Output Directory:** `/mnt/data/blainey/whitney-analysis/analysis/brieflow_output`
 
 ## 1. Preprocessing
 
