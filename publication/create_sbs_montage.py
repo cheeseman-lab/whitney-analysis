@@ -124,7 +124,11 @@ def main():
 
     output_path = OUTPUT_DIR / "sbs_cycles_montage.png"
     plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
+    # Also save as PDF
+    pdf_path = output_path.with_suffix(".pdf")
+    plt.savefig(pdf_path, dpi=150, bbox_inches='tight', facecolor='white')
     print(f"\nSaved montage to: {output_path}")
+    print(f"Saved montage to: {pdf_path}")
 
     # Also create a full-resolution version
     fig2, axes2 = plt.subplots(2, 3, figsize=(24, 16))
@@ -145,7 +149,11 @@ def main():
 
     output_path_full = OUTPUT_DIR / "sbs_cycles_montage_full.png"
     plt.savefig(output_path_full, dpi=100, bbox_inches='tight', facecolor='white')
+    # Also save as PDF
+    pdf_path_full = output_path_full.with_suffix(".pdf")
+    plt.savefig(pdf_path_full, dpi=100, bbox_inches='tight', facecolor='white')
     print(f"Saved full FOV montage to: {output_path_full}")
+    print(f"Saved full FOV montage to: {pdf_path_full}")
 
     plt.close('all')
 

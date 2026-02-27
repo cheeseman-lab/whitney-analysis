@@ -186,8 +186,12 @@ def plot_phate_map(df, categories, output_path):
 
     plt.tight_layout()
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    # Also save as PDF
+    pdf_path = output_path.with_suffix(".pdf")
+    fig.savefig(pdf_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved: {output_path}")
+    print(f"Saved: {pdf_path}")
 
 
 def print_summary(categories):

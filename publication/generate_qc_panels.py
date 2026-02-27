@@ -361,6 +361,7 @@ def plot_panel_a_combined(cell_mapping_data, cell_density_data, output_path):
     # Top level title - position relative to figure
     fig.suptitle("Spatial QC (Averaged Across All Wells)", fontsize=12, fontweight="bold", y=0.99)
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
+    fig.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved: {output_path}")
 
@@ -455,6 +456,7 @@ def plot_panel_b_boxplot(data, output_path):
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved: {output_path}")
 
@@ -498,6 +500,7 @@ def plot_panel_c_barplot(data, output_path):
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved: {output_path}")
 
@@ -586,6 +589,7 @@ def plot_panel_d_prefix_matching(prefix_data, output_path):
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved: {output_path}")
 
@@ -636,6 +640,7 @@ def plot_panel_e_qscores(reads_df, output_path):
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved: {output_path}")
 
@@ -672,6 +677,7 @@ def plot_panel_f_kde(data, output_path):
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches="tight")
+    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
     plt.close()
     print(f"Saved: {output_path}")
 

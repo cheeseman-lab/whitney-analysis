@@ -5,9 +5,7 @@
 # Run from the whitney-analysis root directory on the cluster.
 # All scripts use hardcoded /mnt/data/blainey/whitney-analysis/ paths.
 #
-# To switch to PDF output for Illustrator, change .png -> .pdf in the
-# output filenames of each script's main(). matplotlib will automatically
-# produce vector output when the filename ends in .pdf.
+# All matplotlib scripts output both .png and .pdf (vector for Illustrator).
 
 set -euo pipefail
 
@@ -61,12 +59,8 @@ echo "=== 7/7 Cluster cards ==="
 python3 "$SCRIPT_DIR/cluster_card.py" \
     --clusters 10 221 \
     --output-dir "$OUTPUT_DIR/LLM"
-echo "  Done: LLM/card_cluster_{0,221}.{png,pdf}"
+echo "  Done: LLM/card_cluster_{10,221}.{png,pdf}"
 
 echo ""
 echo "=== All figures generated ==="
 echo "Output: $OUTPUT_DIR"
-echo ""
-echo "NOTE: To produce PDF (vector) output for Illustrator, change"
-echo "  .png -> .pdf in each script's savefig filenames."
-echo "  matplotlib natively outputs vector when filename ends in .pdf."
