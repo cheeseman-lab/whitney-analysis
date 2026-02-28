@@ -57,9 +57,9 @@ echo "  Done: LLM/cluster_genes_table.tsv"
 echo ""
 echo "=== 7/7 Cluster cards ==="
 python3 "$SCRIPT_DIR/cluster_card.py" \
-    --clusters 10 221 \
+    --clusters 1 2 5 6 8 13 \
     --output-dir "$OUTPUT_DIR/LLM"
-echo "  Done: LLM/card_cluster_{10,221}.{png,pdf}"
+echo "  Done: LLM/card_cluster_{1,2,5,6,8,13}.{png,pdf}"
 
 echo ""
 echo "=== All figures generated ==="

@@ -27,12 +27,16 @@ EFFECTS_FILE = BRIEFLOW_OUTPUT / "aggregate" / "tsvs" / "CeCl-all_ChCo-Hoescht_C
 PVALS_FILE = BRIEFLOW_OUTPUT / "aggregate" / "bootstrap" / "CeCl-all_ChCo-Hoescht_COX4_AGP_ConA__all_gene_bootstrap_results.tsv"
 
 # Selected clusters for the paper (Fig 2g, 2h)
-DEFAULT_CLUSTERS = [10, 221]
+DEFAULT_CLUSTERS = [1, 2, 5, 6, 8, 13]
 
 # Consistent cluster-to-color mapping for paper figures
 CLUSTER_COLORS = {
-    10: '#2563eb',   # blue — CRL E3 ubiquitin ligases
-    221: '#dc2626',  # red — m6A RNA methylation
+    1: '#2563eb',    # blue — 60S ribosome biogenesis
+    2: '#1d4ed8',    # dark blue — 40S ribosome biogenesis
+    13: '#3b82f6',   # light blue — SSU processome
+    5: '#dc2626',    # red — pre-mRNA splicing
+    6: '#ea580c',    # orange — ubiquitin-proteasome
+    8: '#9333ea',    # purple — RNA Pol II transcription
 }
 FALLBACK_COLORS = [
     '#8b5cf6', '#06b6d4', '#f97316', '#22c55e', '#ef4444', '#3b82f6',
