@@ -48,9 +48,54 @@ def plot_plate_heatmap(
         elif shape == "squid_ph":
             # Spatially accurate layout for Squid microscope phenotype tiles (1732 tiles)
             rows = [
-                4, 14, 18, 22, 26, 28, 32, 34, 36, 36, 38, 40, 40, 42, 42, 44, 44,
-                46, 46, 46, 46, 46, 48, 48, 48, 48, 46, 46, 46, 46, 46, 44, 44,
-                42, 42, 40, 40, 38, 36, 36, 34, 32, 28, 26, 22, 18, 14, 4,
+                4,
+                14,
+                18,
+                22,
+                26,
+                28,
+                32,
+                34,
+                36,
+                36,
+                38,
+                40,
+                40,
+                42,
+                42,
+                44,
+                44,
+                46,
+                46,
+                46,
+                46,
+                46,
+                48,
+                48,
+                48,
+                48,
+                46,
+                46,
+                46,
+                46,
+                46,
+                44,
+                44,
+                42,
+                42,
+                40,
+                40,
+                38,
+                36,
+                36,
+                34,
+                32,
+                28,
+                26,
+                22,
+                18,
+                14,
+                4,
             ]
         elif isinstance(shape, list):
             rows = shape
@@ -117,7 +162,7 @@ def plot_plate_heatmap(
                     values[grid == tile] = df_well.loc[
                         df_well.tile == tile, metric
                     ].values[0]
-                except:
+                except (IndexError, KeyError):
                     values[grid == tile] = np.nan
             plot = ax.imshow(values, vmin=cmin, vmax=cmax, **kwargs)
         ax.set_title(f"Well {well}", fontsize=24)
@@ -127,7 +172,7 @@ def plot_plate_heatmap(
     cbar_ax = fig.add_axes([0.95, 0.15, 0.025, 0.7])
     try:
         cbar = fig.colorbar(plot, cax=cbar_ax)
-    except:
+    except Exception:
         raise ValueError("No data to plot")
     cbar.set_label(metric, fontsize=18)
     cbar_ax.yaxis.set_ticks_position("left")
@@ -135,7 +180,9 @@ def plot_plate_heatmap(
     return fig, cbar
 
 
-def generate_heatmap(tsv_path: Path, output_path: Path, shape: str = "squid_sbs", plate: str = "6W"):
+def generate_heatmap(
+    tsv_path: Path, output_path: Path, shape: str = "squid_sbs", plate: str = "6W"
+):
     """Generate a heatmap PNG from a TSV file.
 
     Args:

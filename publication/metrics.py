@@ -20,8 +20,14 @@ def get_preprocess_stats(output_dir: Path) -> dict:
     sbs_tiff_dir = preprocess_dir / "images" / "sbs"
     phenotype_tiff_dir = preprocess_dir / "images" / "phenotype"
 
-    sbs_tiff_count = len(list(sbs_tiff_dir.glob("**/*.tiff"))) if sbs_tiff_dir.exists() else 0
-    phenotype_tiff_count = len(list(phenotype_tiff_dir.glob("**/*.tiff"))) if phenotype_tiff_dir.exists() else 0
+    sbs_tiff_count = (
+        len(list(sbs_tiff_dir.glob("**/*.tiff"))) if sbs_tiff_dir.exists() else 0
+    )
+    phenotype_tiff_count = (
+        len(list(phenotype_tiff_dir.glob("**/*.tiff")))
+        if phenotype_tiff_dir.exists()
+        else 0
+    )
 
     return {
         "sbs_tiles": sbs_tiff_count,
@@ -35,7 +41,9 @@ def get_sbs_stats(output_dir: Path) -> dict:
     sbs_eval_dir = output_dir / "sbs" / "eval"
 
     # Load segmentation overview data
-    seg_overview_files = list(sbs_eval_dir.glob("**/segmentation/*__segmentation_overview.tsv"))
+    seg_overview_files = list(
+        sbs_eval_dir.glob("**/segmentation/*__segmentation_overview.tsv")
+    )
 
     total_cells = 0
     plate_stats = {}
@@ -49,7 +57,9 @@ def get_sbs_stats(output_dir: Path) -> dict:
             total_cells += plate_cells
 
     # Load mapping overview data
-    mapping_overview_files = list(sbs_eval_dir.glob("**/mapping/*__mapping_overview.tsv"))
+    mapping_overview_files = list(
+        sbs_eval_dir.glob("**/mapping/*__mapping_overview.tsv")
+    )
 
     mapping_stats = {
         "total_cells_for_mapping": 0,
@@ -67,22 +77,38 @@ def get_sbs_stats(output_dir: Path) -> dict:
             # Sum across all wells in this plate
             mapping_stats["total_cells_for_mapping"] += df["total_cells__count"].sum()
             mapping_stats["cells_with_1_barcode"] += df["1_barcode_cells__count"].sum()
-            mapping_stats["cells_with_1_or_more_barcodes"] += df["1_or_more_barcodes__count"].sum()
+            mapping_stats["cells_with_1_or_more_barcodes"] += df[
+                "1_or_more_barcodes__count"
+            ].sum()
             mapping_stats["cells_with_1_gene"] += df["1_gene_cells__count"].sum()
-            mapping_stats["cells_with_1_or_more_genes"] += df["1_or_more_genes__count"].sum()
+            mapping_stats["cells_with_1_or_more_genes"] += df[
+                "1_or_more_genes__count"
+            ].sum()
 
             # Store plate-level mapping percentages
             if plate_name in plate_stats:
-                plate_stats[plate_name]["avg_1_barcode_pct"] = df["1_barcode_cells__percent"].mean()
-                plate_stats[plate_name]["avg_1_gene_pct"] = df["1_gene_cells__percent"].mean()
+                plate_stats[plate_name]["avg_1_barcode_pct"] = df[
+                    "1_barcode_cells__percent"
+                ].mean()
+                plate_stats[plate_name]["avg_1_gene_pct"] = df[
+                    "1_gene_cells__percent"
+                ].mean()
 
     # Calculate overall percentages
     total_for_mapping = mapping_stats["total_cells_for_mapping"]
     if total_for_mapping > 0:
-        mapping_stats["pct_with_1_barcode"] = 100 * mapping_stats["cells_with_1_barcode"] / total_for_mapping
-        mapping_stats["pct_with_1_or_more_barcodes"] = 100 * mapping_stats["cells_with_1_or_more_barcodes"] / total_for_mapping
-        mapping_stats["pct_with_1_gene"] = 100 * mapping_stats["cells_with_1_gene"] / total_for_mapping
-        mapping_stats["pct_with_1_or_more_genes"] = 100 * mapping_stats["cells_with_1_or_more_genes"] / total_for_mapping
+        mapping_stats["pct_with_1_barcode"] = (
+            100 * mapping_stats["cells_with_1_barcode"] / total_for_mapping
+        )
+        mapping_stats["pct_with_1_or_more_barcodes"] = (
+            100 * mapping_stats["cells_with_1_or_more_barcodes"] / total_for_mapping
+        )
+        mapping_stats["pct_with_1_gene"] = (
+            100 * mapping_stats["cells_with_1_gene"] / total_for_mapping
+        )
+        mapping_stats["pct_with_1_or_more_genes"] = (
+            100 * mapping_stats["cells_with_1_or_more_genes"] / total_for_mapping
+        )
 
     return {
         "total_segmented_cells": int(total_cells),
@@ -107,7 +133,9 @@ def get_phenotype_stats(output_dir: Path) -> dict:
             df = pd.read_csv(file, sep="\t")
             plate_name = file.name.split("__")[0]
             plate_cells = df["final_cells"].sum()
-            initial_cells = df["initial_cells"].sum() if "initial_cells" in df.columns else 0
+            initial_cells = (
+                df["initial_cells"].sum() if "initial_cells" in df.columns else 0
+            )
 
             plate_stats[plate_name] = {
                 "initial_cells": int(initial_cells),
@@ -118,15 +146,32 @@ def get_phenotype_stats(output_dir: Path) -> dict:
 
     # Get feature count from parquet schema
     feature_count = 0
-    sample_parquet_files = list(phenotype_parquet_dir.glob("**/*__phenotype_cp.parquet"))
+    sample_parquet_files = list(
+        phenotype_parquet_dir.glob("**/*__phenotype_cp.parquet")
+    )
 
     if sample_parquet_files:
         import pyarrow.parquet as pq
+
         parquet_schema = pq.read_schema(sample_parquet_files[0])
         all_columns = parquet_schema.names
         # Count non-metadata columns (rough estimate)
-        metadata_prefixes = ["plate", "well", "tile", "cell", "i", "j", "x", "y", "label"]
-        feature_cols = [c for c in all_columns if not any(c.lower().startswith(p) for p in metadata_prefixes)]
+        metadata_prefixes = [
+            "plate",
+            "well",
+            "tile",
+            "cell",
+            "i",
+            "j",
+            "x",
+            "y",
+            "label",
+        ]
+        feature_cols = [
+            c
+            for c in all_columns
+            if not any(c.lower().startswith(p) for p in metadata_prefixes)
+        ]
         feature_count = len(feature_cols)
 
     return {
@@ -153,17 +198,19 @@ def get_merge_pipeline_stats(output_dir: Path) -> dict:
     for f in sbs_cells_files:
         try:
             sbs_cells_count += pq.ParquetFile(f).metadata.num_rows
-        except:
+        except Exception:
             pass
     pipeline["sbs_input_cells"] = sbs_cells_count
 
     # 2. Input: Phenotype cells
-    phenotype_min_files = list(phenotype_parquet_dir.glob("*__phenotype_cp_min.parquet"))
+    phenotype_min_files = list(
+        phenotype_parquet_dir.glob("*__phenotype_cp_min.parquet")
+    )
     phenotype_cells_count = 0
     for f in phenotype_min_files:
         try:
             phenotype_cells_count += pq.ParquetFile(f).metadata.num_rows
-        except:
+        except Exception:
             pass
     pipeline["phenotype_input_cells"] = phenotype_cells_count
 
@@ -175,7 +222,7 @@ def get_merge_pipeline_stats(output_dir: Path) -> dict:
         for f in step_files:
             try:
                 step_count += pq.ParquetFile(f).metadata.num_rows
-            except:
+            except Exception:
                 pass
         pipeline[step] = step_count
 
@@ -205,8 +252,10 @@ def get_merge_pipeline_stats(output_dir: Path) -> dict:
                     dedup_totals["after_sbs_dedup_with_genes"] += row["mapped_genes"]
                 elif stage == "after_phenotype_dedup":
                     dedup_totals["after_phenotype_dedup"] += row["total_cells"]
-                    dedup_totals["after_phenotype_dedup_with_genes"] += row["mapped_genes"]
-        except:
+                    dedup_totals["after_phenotype_dedup_with_genes"] += row[
+                        "mapped_genes"
+                    ]
+        except Exception:
             pass
 
     pipeline["deduplication"] = dedup_totals
@@ -217,7 +266,7 @@ def get_merge_pipeline_stats(output_dir: Path) -> dict:
     for f in merge_data_files:
         try:
             merge_data_count += pq.ParquetFile(f).metadata.num_rows
-        except:
+        except Exception:
             pass
     pipeline["aggregate_merge_data"] = merge_data_count
 
@@ -226,16 +275,20 @@ def get_merge_pipeline_stats(output_dir: Path) -> dict:
     for f in filtered_files:
         try:
             filtered_count += pq.ParquetFile(f).metadata.num_rows
-        except:
+        except Exception:
             pass
     pipeline["aggregate_filtered"] = filtered_count
 
     # Calculate losses at each step
     pipeline["losses"] = {}
     if pipeline["fast_merge"] > 0 and pipeline["merge_final"] > 0:
-        pipeline["losses"]["deduplication"] = pipeline["fast_merge"] - pipeline["merge_final"]
+        pipeline["losses"]["deduplication"] = (
+            pipeline["fast_merge"] - pipeline["merge_final"]
+        )
     if pipeline["aggregate_merge_data"] > 0 and pipeline["aggregate_filtered"] > 0:
-        pipeline["losses"]["aggregate_filtering"] = pipeline["aggregate_merge_data"] - pipeline["aggregate_filtered"]
+        pipeline["losses"]["aggregate_filtering"] = (
+            pipeline["aggregate_merge_data"] - pipeline["aggregate_filtered"]
+        )
 
     return pipeline
 
@@ -251,7 +304,10 @@ def get_merge_stats(output_dir: Path) -> dict:
     mapping_stats_files = list(merge_eval_dir.glob("*__cell_mapping_stats.tsv"))
 
     if not mapping_stats_files:
-        return {"error": "No cell mapping statistics files found", "pipeline": pipeline_stats}
+        return {
+            "error": "No cell mapping statistics files found",
+            "pipeline": pipeline_stats,
+        }
 
     total_mapped = 0
     total_unmapped = 0
@@ -328,7 +384,9 @@ def get_aggregate_stats(output_dir: Path) -> dict:
             pc_cols = [c for c in df.columns if c.startswith("PC_")]
 
             # Count controls
-            controls = df[df["gene_symbol_0"].str.contains("nontargeting", case=False, na=False)]
+            controls = df[
+                df["gene_symbol_0"].str.contains("nontargeting", case=False, na=False)
+            ]
 
             results[name] = {
                 "distinct_perturbations": int(distinct_perturbations),
@@ -353,6 +411,104 @@ def get_aggregate_stats(output_dir: Path) -> dict:
                     results[name]["na_stats_available"] = True
                 except Exception:
                     pass
+
+    return results
+
+
+def get_essential_gene_stats(output_dir: Path, essential_genes_file: Path) -> dict:
+    """Compute essential gene overlap for full clustering, filtered clustering, and high-confidence clusters."""
+    if not essential_genes_file.exists():
+        return {"error": f"Essential genes file not found: {essential_genes_file}"}
+
+    essential_df = pd.read_csv(essential_genes_file, sep="\t")
+    essential_set = set(essential_df["gene_symbol_0"].dropna().unique())
+    results = {"total_essential_genes": len(essential_set)}
+
+    cluster_dir = output_dir / "cluster"
+    if not cluster_dir.exists():
+        return results
+
+    # Find channel combo dirs
+    for channel_combo_dir in cluster_dir.iterdir():
+        if not channel_combo_dir.is_dir():
+            continue
+        for cell_class_dir in channel_combo_dir.iterdir():
+            if not cell_class_dir.is_dir():
+                continue
+            key = f"{channel_combo_dir.name}/{cell_class_dir.name}"
+
+            # Full clustering: genes from aggregate_cleaned.tsv
+            full_agg = cell_class_dir / "aggregate_cleaned.tsv"
+            if full_agg.exists():
+                try:
+                    df = pd.read_csv(full_agg, sep="\t")
+                    all_genes = set(df["gene_symbol_0"].dropna().unique())
+                    overlap = essential_set & all_genes
+                    results[f"full_{key}"] = {
+                        "total_genes": len(all_genes),
+                        "essential_overlap": len(overlap),
+                        "essential_pct": 100 * len(overlap) / len(essential_set)
+                        if essential_set
+                        else 0,
+                    }
+                except Exception:
+                    pass
+
+            # Filtered clustering
+            filtered_dir = cell_class_dir / "filtered"
+            if filtered_dir.exists():
+                filtered_agg = filtered_dir / "aggregate_cleaned.tsv"
+                if filtered_agg.exists():
+                    try:
+                        df = pd.read_csv(filtered_agg, sep="\t")
+                        filtered_genes = set(df["gene_symbol_0"].dropna().unique())
+                        overlap = essential_set & filtered_genes
+                        results[f"filtered_{key}"] = {
+                            "total_genes": len(filtered_genes),
+                            "essential_overlap": len(overlap),
+                            "essential_pct": 100 * len(overlap) / len(essential_set)
+                            if essential_set
+                            else 0,
+                        }
+                    except Exception:
+                        pass
+
+                # High-confidence MozzareLLM clusters only
+                for res_dir in filtered_dir.iterdir():
+                    if not res_dir.is_dir():
+                        continue
+                    mozzarellm_dir = res_dir / "mozzarellm"
+                    if not mozzarellm_dir.exists():
+                        continue
+                    summary_files = list(mozzarellm_dir.glob("*_results_summaries.tsv"))
+                    phate_file = res_dir / "phate_leiden_clustering.tsv"
+                    if summary_files and phate_file.exists():
+                        try:
+                            summaries = pd.read_csv(summary_files[0], sep="\t")
+                            high_conf_ids = set(
+                                summaries[summaries["pathway_confidence"] == "High"][
+                                    "cluster_id"
+                                ]
+                            )
+                            phate_df = pd.read_csv(phate_file, sep="\t")
+                            hc_genes = set(
+                                phate_df[phate_df["cluster"].isin(high_conf_ids)][
+                                    "gene_symbol_0"
+                                ]
+                                .dropna()
+                                .unique()
+                            )
+                            overlap = essential_set & hc_genes
+                            results[f"high_confidence_{key}_res{res_dir.name}"] = {
+                                "total_genes": len(hc_genes),
+                                "essential_overlap": len(overlap),
+                                "essential_pct": 100 * len(overlap) / len(essential_set)
+                                if essential_set
+                                else 0,
+                                "n_high_conf_clusters": len(high_conf_ids),
+                            }
+                        except Exception:
+                            pass
 
     return results
 
@@ -392,10 +548,18 @@ def get_cluster_stats_for_dir(base_dir: Path) -> list:
             result = {
                 "resolution": resolution,
                 "n_clusters": n_clusters,
-                "real_corum_enriched": real_metrics.get("CORUM", {}).get("num_enriched_clusters", 0),
-                "real_corum_proportion": real_metrics.get("CORUM", {}).get("proportion_enriched", 0),
-                "real_kegg_enriched": real_metrics.get("KEGG", {}).get("num_enriched_clusters", 0),
-                "real_kegg_proportion": real_metrics.get("KEGG", {}).get("proportion_enriched", 0),
+                "real_corum_enriched": real_metrics.get("CORUM", {}).get(
+                    "num_enriched_clusters", 0
+                ),
+                "real_corum_proportion": real_metrics.get("CORUM", {}).get(
+                    "proportion_enriched", 0
+                ),
+                "real_kegg_enriched": real_metrics.get("KEGG", {}).get(
+                    "num_enriched_clusters", 0
+                ),
+                "real_kegg_proportion": real_metrics.get("KEGG", {}).get(
+                    "proportion_enriched", 0
+                ),
             }
 
             # Add STRING metrics if available
@@ -408,24 +572,40 @@ def get_cluster_stats_for_dir(base_dir: Path) -> list:
             if shuffled_metrics_path.exists():
                 with open(shuffled_metrics_path, "r") as f:
                     shuffled_metrics = json.load(f)
-                result["shuffled_corum_enriched"] = shuffled_metrics.get("CORUM", {}).get("num_enriched_clusters", 0)
-                result["shuffled_corum_proportion"] = shuffled_metrics.get("CORUM", {}).get("proportion_enriched", 0)
-                result["shuffled_kegg_enriched"] = shuffled_metrics.get("KEGG", {}).get("num_enriched_clusters", 0)
-                result["shuffled_kegg_proportion"] = shuffled_metrics.get("KEGG", {}).get("proportion_enriched", 0)
+                result["shuffled_corum_enriched"] = shuffled_metrics.get(
+                    "CORUM", {}
+                ).get("num_enriched_clusters", 0)
+                result["shuffled_corum_proportion"] = shuffled_metrics.get(
+                    "CORUM", {}
+                ).get("proportion_enriched", 0)
+                result["shuffled_kegg_enriched"] = shuffled_metrics.get("KEGG", {}).get(
+                    "num_enriched_clusters", 0
+                )
+                result["shuffled_kegg_proportion"] = shuffled_metrics.get(
+                    "KEGG", {}
+                ).get("proportion_enriched", 0)
 
                 # Calculate fold enrichment
                 if result["shuffled_corum_proportion"] > 0:
-                    result["corum_fold_enrichment"] = result["real_corum_proportion"] / result["shuffled_corum_proportion"]
+                    result["corum_fold_enrichment"] = (
+                        result["real_corum_proportion"]
+                        / result["shuffled_corum_proportion"]
+                    )
                 if result["shuffled_kegg_proportion"] > 0:
-                    result["kegg_fold_enrichment"] = result["real_kegg_proportion"] / result["shuffled_kegg_proportion"]
+                    result["kegg_fold_enrichment"] = (
+                        result["real_kegg_proportion"]
+                        / result["shuffled_kegg_proportion"]
+                    )
 
             results.append(result)
 
         except Exception as e:
-            results.append({
-                "resolution": resolution,
-                "error": str(e),
-            })
+            results.append(
+                {
+                    "resolution": resolution,
+                    "error": str(e),
+                }
+            )
 
     # Sort by resolution
     results.sort(key=lambda x: x.get("resolution", 0))
@@ -483,7 +663,9 @@ def get_cluster_stats(output_dir: Path) -> dict:
                     n_filtered_genes = 0
                     if filtered_aggregate.exists():
                         try:
-                            n_filtered_genes = len(pd.read_csv(filtered_aggregate, sep="\t"))
+                            n_filtered_genes = len(
+                                pd.read_csv(filtered_aggregate, sep="\t")
+                            )
                         except Exception:
                             pass
 
@@ -504,28 +686,53 @@ def get_cluster_stats(output_dir: Path) -> dict:
                         mozzarellm_dir = res_dir / "mozzarellm"
                         if mozzarellm_dir.exists():
                             # Find results files
-                            summary_files = list(mozzarellm_dir.glob("*_results_summaries.tsv"))
+                            summary_files = list(
+                                mozzarellm_dir.glob("*_results_summaries.tsv")
+                            )
                             if summary_files:
                                 try:
                                     summary_df = pd.read_csv(summary_files[0], sep="\t")
-                                    model_name = summary_files[0].name.replace("_results_summaries.tsv", "")
+                                    model_name = summary_files[0].name.replace(
+                                        "_results_summaries.tsv", ""
+                                    )
 
                                     # Count by confidence
-                                    confidence_counts = summary_df["pathway_confidence"].value_counts().to_dict()
+                                    confidence_counts = (
+                                        summary_df["pathway_confidence"]
+                                        .value_counts()
+                                        .to_dict()
+                                    )
 
                                     # Top processes
-                                    top_processes = summary_df["dominant_process"].value_counts().head(5).to_dict()
+                                    top_processes = (
+                                        summary_df["dominant_process"]
+                                        .value_counts()
+                                        .head(5)
+                                        .to_dict()
+                                    )
 
                                     results["filtered"][key]["mozzarellm"] = {
                                         "resolution": float(res_dir.name),
                                         "model": model_name,
                                         "total_clusters": len(summary_df),
-                                        "high_confidence": confidence_counts.get("High", 0),
-                                        "medium_confidence": confidence_counts.get("Medium", 0),
-                                        "low_confidence": confidence_counts.get("Low", 0),
-                                        "established_genes": int(summary_df["num_established"].sum()),
-                                        "novel_genes": int(summary_df["num_novel"].sum()),
-                                        "uncharacterized_genes": int(summary_df["num_uncharacterized"].sum()),
+                                        "high_confidence": confidence_counts.get(
+                                            "High", 0
+                                        ),
+                                        "medium_confidence": confidence_counts.get(
+                                            "Medium", 0
+                                        ),
+                                        "low_confidence": confidence_counts.get(
+                                            "Low", 0
+                                        ),
+                                        "established_genes": int(
+                                            summary_df["num_established"].sum()
+                                        ),
+                                        "novel_genes": int(
+                                            summary_df["num_novel"].sum()
+                                        ),
+                                        "uncharacterized_genes": int(
+                                            summary_df["num_uncharacterized"].sum()
+                                        ),
                                         "top_processes": top_processes,
                                     }
                                 except Exception:
@@ -556,25 +763,39 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
     lines.append("")
     preprocess = stats.get("preprocess", {})
     lines.append(f"- **SBS Tiles**: {format_number(preprocess.get('sbs_tiles', 0))}")
-    lines.append(f"- **Phenotype Tiles**: {format_number(preprocess.get('phenotype_tiles', 0))}")
-    lines.append(f"- **Total Tiles**: {format_number(preprocess.get('total_tiles', 0))}")
+    lines.append(
+        f"- **Phenotype Tiles**: {format_number(preprocess.get('phenotype_tiles', 0))}"
+    )
+    lines.append(
+        f"- **Total Tiles**: {format_number(preprocess.get('total_tiles', 0))}"
+    )
     lines.append("")
 
     # SBS
     lines.append("## 2. SBS (Sequencing by Synthesis)")
     lines.append("")
     sbs = stats.get("sbs", {})
-    lines.append(f"- **Total Segmented Cells**: {format_number(sbs.get('total_segmented_cells', 0))}")
+    lines.append(
+        f"- **Total Segmented Cells**: {format_number(sbs.get('total_segmented_cells', 0))}"
+    )
     lines.append("")
 
     mapping = sbs.get("mapping", {})
     if mapping:
         lines.append("### Barcode Mapping")
         lines.append("")
-        lines.append(f"- **Cells with 1 barcode**: {format_number(mapping.get('cells_with_1_barcode', 0))} ({mapping.get('pct_with_1_barcode', 0):.1f}%)")
-        lines.append(f"- **Cells with 1+ barcodes**: {format_number(mapping.get('cells_with_1_or_more_barcodes', 0))} ({mapping.get('pct_with_1_or_more_barcodes', 0):.1f}%)")
-        lines.append(f"- **Cells with 1 gene**: {format_number(mapping.get('cells_with_1_gene', 0))} ({mapping.get('pct_with_1_gene', 0):.1f}%)")
-        lines.append(f"- **Cells with 1+ genes**: {format_number(mapping.get('cells_with_1_or_more_genes', 0))} ({mapping.get('pct_with_1_or_more_genes', 0):.1f}%)")
+        lines.append(
+            f"- **Cells with 1 barcode**: {format_number(mapping.get('cells_with_1_barcode', 0))} ({mapping.get('pct_with_1_barcode', 0):.1f}%)"
+        )
+        lines.append(
+            f"- **Cells with 1+ barcodes**: {format_number(mapping.get('cells_with_1_or_more_barcodes', 0))} ({mapping.get('pct_with_1_or_more_barcodes', 0):.1f}%)"
+        )
+        lines.append(
+            f"- **Cells with 1 gene**: {format_number(mapping.get('cells_with_1_gene', 0))} ({mapping.get('pct_with_1_gene', 0):.1f}%)"
+        )
+        lines.append(
+            f"- **Cells with 1+ genes**: {format_number(mapping.get('cells_with_1_or_more_genes', 0))} ({mapping.get('pct_with_1_or_more_genes', 0):.1f}%)"
+        )
         lines.append("")
 
     # Phenotype
@@ -582,7 +803,9 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
     lines.append("")
     phenotype = stats.get("phenotype", {})
     lines.append(f"- **Total Cells**: {format_number(phenotype.get('total_cells', 0))}")
-    lines.append(f"- **Feature Count**: {format_number(phenotype.get('feature_count', 0))}")
+    lines.append(
+        f"- **Feature Count**: {format_number(phenotype.get('feature_count', 0))}"
+    )
     lines.append("")
 
     # Merge + Aggregate Pipeline (combined for clarity)
@@ -594,11 +817,11 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
 
     if pipeline:
         # Calculate key metrics
-        sbs_input = pipeline.get('sbs_input_cells', 0)
-        ph_input = pipeline.get('phenotype_input_cells', 0)
-        fast_merge = pipeline.get('fast_merge', 0)
-        merge_final = pipeline.get('merge_final', 0)
-        filtered = pipeline.get('aggregate_filtered', 0)
+        sbs_input = pipeline.get("sbs_input_cells", 0)
+        ph_input = pipeline.get("phenotype_input_cells", 0)
+        fast_merge = pipeline.get("fast_merge", 0)
+        merge_final = pipeline.get("merge_final", 0)
+        filtered = pipeline.get("aggregate_filtered", 0)
         dedup = pipeline.get("deduplication", {})
         losses = pipeline.get("losses", {})
 
@@ -610,33 +833,49 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
 
         lines.append("### Spatial Matching")
         lines.append("")
-        lines.append(f"- **Candidate matches** (fast_merge): {format_number(fast_merge)}")
+        lines.append(
+            f"- **Candidate matches** (fast_merge): {format_number(fast_merge)}"
+        )
         lines.append("")
 
         lines.append("### Deduplication")
         lines.append("")
         if dedup.get("initial", 0) > 0:
-            lines.append(f"- **Initial matches**: {format_number(dedup.get('initial', 0))} ({format_number(dedup.get('initial_with_genes', 0))} with genes)")
-            lines.append(f"- **After SBS dedup** (1 phenotype per SBS cell): {format_number(dedup.get('after_sbs_dedup', 0))} ({format_number(dedup.get('after_sbs_dedup_with_genes', 0))} with genes)")
-            lines.append(f"- **After phenotype dedup** (1 SBS per phenotype cell): {format_number(dedup.get('after_phenotype_dedup', 0))} ({format_number(dedup.get('after_phenotype_dedup_with_genes', 0))} with genes)")
+            lines.append(
+                f"- **Initial matches**: {format_number(dedup.get('initial', 0))} ({format_number(dedup.get('initial_with_genes', 0))} with genes)"
+            )
+            lines.append(
+                f"- **After SBS dedup** (1 phenotype per SBS cell): {format_number(dedup.get('after_sbs_dedup', 0))} ({format_number(dedup.get('after_sbs_dedup_with_genes', 0))} with genes)"
+            )
+            lines.append(
+                f"- **After phenotype dedup** (1 SBS per phenotype cell): {format_number(dedup.get('after_phenotype_dedup', 0))} ({format_number(dedup.get('after_phenotype_dedup_with_genes', 0))} with genes)"
+            )
         else:
             lines.append(f"- **Final matched cells**: {format_number(merge_final)}")
         if losses.get("deduplication"):
-            lines.append(f"- *Removed by deduplication*: {format_number(losses.get('deduplication', 0))}")
+            lines.append(
+                f"- *Removed by deduplication*: {format_number(losses.get('deduplication', 0))}"
+            )
         lines.append("")
 
         lines.append("### Aggregate Filtering")
         lines.append("")
         lines.append(f"- **Input to aggregate**: {format_number(merge_final)}")
-        lines.append(f"- **After filtering** (requires gene + quality): {format_number(filtered)}")
+        lines.append(
+            f"- **After filtering** (requires gene + quality): {format_number(filtered)}"
+        )
         if losses.get("aggregate_filtering"):
-            lines.append(f"- *Removed* (no gene / quality): {format_number(losses.get('aggregate_filtering', 0))}")
+            lines.append(
+                f"- *Removed* (no gene / quality): {format_number(losses.get('aggregate_filtering', 0))}"
+            )
         lines.append("")
 
         # Retention summary
         if sbs_input > 0 and filtered > 0:
             overall_retention = 100 * filtered / sbs_input
-            lines.append(f"**Overall Retention:** {format_number(filtered)} / {format_number(sbs_input)} = **{overall_retention:.1f}%**")
+            lines.append(
+                f"**Overall Retention:** {format_number(filtered)} / {format_number(sbs_input)} = **{overall_retention:.1f}%**"
+            )
             lines.append("")
 
     # Aggregation results
@@ -648,12 +887,24 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
         else:
             lines.append(f"**Dataset:** {name}")
             lines.append("")
-            lines.append(f"- **Total Cells**: {format_number(astats.get('total_aggregated_cells', 0))}")
-            lines.append(f"- **Distinct Perturbations**: {format_number(astats.get('distinct_perturbations', 0))}")
-            lines.append(f"- **Control Perturbations**: {format_number(astats.get('control_perturbations', 0))}")
-            lines.append(f"- **Median Cells/Perturbation**: {format_number(astats.get('median_cells_per_perturbation', 0))}")
-            lines.append(f"- **Cell Range/Perturbation**: {format_number(astats.get('min_cells_per_perturbation', 0))} - {format_number(astats.get('max_cells_per_perturbation', 0))}")
-            lines.append(f"- **PC Features**: {format_number(astats.get('pc_features', 0))}")
+            lines.append(
+                f"- **Total Cells**: {format_number(astats.get('total_aggregated_cells', 0))}"
+            )
+            lines.append(
+                f"- **Distinct Perturbations**: {format_number(astats.get('distinct_perturbations', 0))}"
+            )
+            lines.append(
+                f"- **Control Perturbations**: {format_number(astats.get('control_perturbations', 0))}"
+            )
+            lines.append(
+                f"- **Median Cells/Perturbation**: {format_number(astats.get('median_cells_per_perturbation', 0))}"
+            )
+            lines.append(
+                f"- **Cell Range/Perturbation**: {format_number(astats.get('min_cells_per_perturbation', 0))} - {format_number(astats.get('max_cells_per_perturbation', 0))}"
+            )
+            lines.append(
+                f"- **PC Features**: {format_number(astats.get('pc_features', 0))}"
+            )
         lines.append("")
 
     # Cluster
@@ -675,52 +926,92 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
                 resolutions = data.get("resolutions", [])
                 for r in resolutions:
                     if "error" in r:
-                        lines.append(f"- **Resolution {r.get('resolution', '?')}**: Error - {r['error']}")
+                        lines.append(
+                            f"- **Resolution {r.get('resolution', '?')}**: Error - {r['error']}"
+                        )
                     else:
-                        corum_fold = r.get('corum_fold_enrichment', None)
-                        kegg_fold = r.get('kegg_fold_enrichment', None)
-                        corum_str = f"{corum_fold:.1f}x" if isinstance(corum_fold, float) else "N/A"
-                        kegg_str = f"{kegg_fold:.1f}x" if isinstance(kegg_fold, float) else "N/A"
-                        lines.append(f"- **Resolution {r.get('resolution', '?')}**: {r.get('n_clusters', 0)} clusters, CORUM {r.get('real_corum_enriched', 0)} ({corum_str}), KEGG {r.get('real_kegg_enriched', 0)} ({kegg_str})")
+                        corum_fold = r.get("corum_fold_enrichment", None)
+                        kegg_fold = r.get("kegg_fold_enrichment", None)
+                        corum_str = (
+                            f"{corum_fold:.1f}x"
+                            if isinstance(corum_fold, float)
+                            else "N/A"
+                        )
+                        kegg_str = (
+                            f"{kegg_fold:.1f}x"
+                            if isinstance(kegg_fold, float)
+                            else "N/A"
+                        )
+                        lines.append(
+                            f"- **Resolution {r.get('resolution', '?')}**: {r.get('n_clusters', 0)} clusters, CORUM {r.get('real_corum_enriched', 0)} ({corum_str}), KEGG {r.get('real_kegg_enriched', 0)} ({kegg_str})"
+                        )
                 lines.append("")
 
                 # Find best resolution
                 valid_results = [r for r in resolutions if "error" not in r]
                 if valid_results:
-                    best = max(valid_results, key=lambda x: x.get("real_corum_enriched", 0) + x.get("real_kegg_enriched", 0))
-                    lines.append(f"**Best:** Resolution {best.get('resolution')} with {best.get('real_corum_enriched', 0) + best.get('real_kegg_enriched', 0)} enriched clusters")
+                    best = max(
+                        valid_results,
+                        key=lambda x: x.get("real_corum_enriched", 0)
+                        + x.get("real_kegg_enriched", 0),
+                    )
+                    lines.append(
+                        f"**Best:** Resolution {best.get('resolution')} with {best.get('real_corum_enriched', 0) + best.get('real_kegg_enriched', 0)} enriched clusters"
+                    )
                     lines.append("")
 
         # Filtered clustering
         filtered = cluster.get("filtered", {})
         if filtered:
-            lines.append("### Filtered Clustering (bootstrap-significant perturbations)")
+            lines.append(
+                "### Filtered Clustering (bootstrap-significant perturbations)"
+            )
             lines.append("")
             for key, data in filtered.items():
                 n_genes = data.get("n_genes", 0)
                 params = data.get("filter_params", {})
                 lines.append(f"**{key}** ({format_number(n_genes)} genes)")
                 lines.append("")
-                lines.append(f"*Filter: z-score threshold={params.get('zscore_threshold', 'N/A')}, FDR threshold={params.get('fdr_threshold', 'N/A')}, mode={params.get('filter_mode', 'N/A')}*")
+                lines.append(
+                    f"*Filter: z-score threshold={params.get('zscore_threshold', 'N/A')}, FDR threshold={params.get('fdr_threshold', 'N/A')}, mode={params.get('filter_mode', 'N/A')}*"
+                )
                 lines.append("")
                 resolutions = data.get("resolutions", [])
                 for r in resolutions:
                     if "error" in r:
-                        lines.append(f"- **Resolution {r.get('resolution', '?')}**: Error - {r['error']}")
+                        lines.append(
+                            f"- **Resolution {r.get('resolution', '?')}**: Error - {r['error']}"
+                        )
                     else:
-                        corum_fold = r.get('corum_fold_enrichment', None)
-                        kegg_fold = r.get('kegg_fold_enrichment', None)
-                        corum_str = f"{corum_fold:.1f}x" if isinstance(corum_fold, float) else "N/A"
-                        kegg_str = f"{kegg_fold:.1f}x" if isinstance(kegg_fold, float) else "N/A"
-                        string_prec = r.get('string_precision', 0)
-                        lines.append(f"- **Resolution {r.get('resolution', '?')}**: {r.get('n_clusters', 0)} clusters, STRING {string_prec*100:.1f}% precision, CORUM {r.get('real_corum_enriched', 0)} ({corum_str}), KEGG {r.get('real_kegg_enriched', 0)} ({kegg_str})")
+                        corum_fold = r.get("corum_fold_enrichment", None)
+                        kegg_fold = r.get("kegg_fold_enrichment", None)
+                        corum_str = (
+                            f"{corum_fold:.1f}x"
+                            if isinstance(corum_fold, float)
+                            else "N/A"
+                        )
+                        kegg_str = (
+                            f"{kegg_fold:.1f}x"
+                            if isinstance(kegg_fold, float)
+                            else "N/A"
+                        )
+                        string_prec = r.get("string_precision", 0)
+                        lines.append(
+                            f"- **Resolution {r.get('resolution', '?')}**: {r.get('n_clusters', 0)} clusters, STRING {string_prec * 100:.1f}% precision, CORUM {r.get('real_corum_enriched', 0)} ({corum_str}), KEGG {r.get('real_kegg_enriched', 0)} ({kegg_str})"
+                        )
                 lines.append("")
 
                 # Find best resolution
                 valid_results = [r for r in resolutions if "error" not in r]
                 if valid_results:
-                    best = max(valid_results, key=lambda x: x.get("real_corum_enriched", 0) + x.get("real_kegg_enriched", 0))
-                    lines.append(f"**Best:** Resolution {best.get('resolution')} with {best.get('real_corum_enriched', 0) + best.get('real_kegg_enriched', 0)} enriched clusters")
+                    best = max(
+                        valid_results,
+                        key=lambda x: x.get("real_corum_enriched", 0)
+                        + x.get("real_kegg_enriched", 0),
+                    )
+                    lines.append(
+                        f"**Best:** Resolution {best.get('resolution')} with {best.get('real_corum_enriched', 0) + best.get('real_kegg_enriched', 0)} enriched clusters"
+                    )
                     lines.append("")
 
                 # MozzareLLM results
@@ -728,16 +1019,32 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
                 if mozzarellm:
                     lines.append("#### MozzareLLM Analysis")
                     lines.append("")
-                    lines.append(f"*Model: {mozzarellm.get('model', 'unknown')}, Resolution: {mozzarellm.get('resolution', 'N/A')}*")
+                    lines.append(
+                        f"*Model: {mozzarellm.get('model', 'unknown')}, Resolution: {mozzarellm.get('resolution', 'N/A')}*"
+                    )
                     lines.append("")
-                    lines.append(f"- **Total clusters analyzed**: {mozzarellm.get('total_clusters', 0)}")
-                    lines.append(f"- **High confidence**: {mozzarellm.get('high_confidence', 0)}")
-                    lines.append(f"- **Medium confidence**: {mozzarellm.get('medium_confidence', 0)}")
-                    lines.append(f"- **Low confidence**: {mozzarellm.get('low_confidence', 0)}")
+                    lines.append(
+                        f"- **Total clusters analyzed**: {mozzarellm.get('total_clusters', 0)}"
+                    )
+                    lines.append(
+                        f"- **High confidence**: {mozzarellm.get('high_confidence', 0)}"
+                    )
+                    lines.append(
+                        f"- **Medium confidence**: {mozzarellm.get('medium_confidence', 0)}"
+                    )
+                    lines.append(
+                        f"- **Low confidence**: {mozzarellm.get('low_confidence', 0)}"
+                    )
                     lines.append("")
-                    lines.append(f"- **Established genes**: {format_number(mozzarellm.get('established_genes', 0))}")
-                    lines.append(f"- **Novel gene roles**: {format_number(mozzarellm.get('novel_genes', 0))}")
-                    lines.append(f"- **Uncharacterized genes**: {format_number(mozzarellm.get('uncharacterized_genes', 0))}")
+                    lines.append(
+                        f"- **Established genes**: {format_number(mozzarellm.get('established_genes', 0))}"
+                    )
+                    lines.append(
+                        f"- **Novel gene roles**: {format_number(mozzarellm.get('novel_genes', 0))}"
+                    )
+                    lines.append(
+                        f"- **Uncharacterized genes**: {format_number(mozzarellm.get('uncharacterized_genes', 0))}"
+                    )
                     lines.append("")
 
                     top_processes = mozzarellm.get("top_processes", {})
@@ -749,11 +1056,38 @@ def generate_markdown_report(stats: dict, output_dir: Path) -> str:
                                 lines.append(f"- {process} ({count} clusters)")
                         lines.append("")
 
+    # Essential Gene Overlap
+    essential = stats.get("essential_genes", {})
+    if essential and "error" not in essential:
+        lines.append("## 6. Essential Gene Overlap")
+        lines.append("")
+        lines.append(
+            f"**Reference essential genes:** {format_number(essential.get('total_essential_genes', 0))}"
+        )
+        lines.append("")
+
+        for key, data in essential.items():
+            if key == "total_essential_genes" or not isinstance(data, dict):
+                continue
+            label = key.replace("_", " ").replace("/", " / ")
+            if key.startswith("full_"):
+                label = "Full clustering"
+            elif key.startswith("filtered_"):
+                label = "Filtered clustering (bootstrap-significant)"
+            elif key.startswith("high_confidence_"):
+                label = f"High-confidence MozzareLLM clusters (res {data.get('n_high_conf_clusters', '?')} clusters)"
+            lines.append(
+                f"- **{label}**: {format_number(data.get('essential_overlap', 0))} / {format_number(data.get('total_genes', 0))} genes are essential ({data.get('essential_pct', 0):.1f}% of reference list)"
+            )
+        lines.append("")
+
     return "\n".join(lines)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Assess brieflow output and generate metrics report")
+    parser = argparse.ArgumentParser(
+        description="Assess brieflow output and generate metrics report"
+    )
     parser.add_argument(
         "output_dir",
         type=str,
@@ -800,6 +1134,12 @@ def main():
 
     print("Gathering clustering statistics...")
     stats["cluster"] = get_cluster_stats(output_dir)
+
+    print("Gathering essential gene overlap statistics...")
+    essential_genes_file = Path(__file__).parent / "essential_genes.tsv"
+    stats["essential_genes"] = get_essential_gene_stats(
+        output_dir, essential_genes_file
+    )
 
     print()
 

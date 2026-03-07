@@ -46,11 +46,11 @@ def create_composite(img, channel_colors=None):
     if channel_colors is None:
         # DAPI, G, T, A, C
         channel_colors = [
-            [0, 0, 1],      # DAPI - blue
-            [0, 1, 0],      # G - green
-            [1, 0, 0],      # T - red
-            [1, 0, 1],      # A - magenta
-            [0, 1, 1],      # C - cyan
+            [0, 0, 1],  # DAPI - blue
+            [0, 1, 0],  # G - green
+            [1, 0, 0],  # T - red
+            [1, 0, 1],  # A - magenta
+            [0, 1, 1],  # C - cyan
         ]
 
     rgb = np.zeros((*img.shape[1:], 3), dtype=float)
@@ -69,10 +69,10 @@ def create_sbs_composite(img):
     """
     # Only use channels 1-4 (SBS bases)
     channel_colors = [
-        [0, 1, 0],      # G - green
-        [1, 0, 0],      # T - red
-        [1, 0, 1],      # A - magenta
-        [0, 1, 1],      # C - cyan
+        [0, 1, 0],  # G - green
+        [1, 0, 0],  # T - red
+        [1, 0, 1],  # A - magenta
+        [0, 1, 1],  # C - cyan
     ]
 
     rgb = np.zeros((*img.shape[1:], 3), dtype=float)
@@ -107,26 +107,31 @@ def main():
         crop_size = 1000
         y_start = (h - crop_size) // 2
         x_start = (w - crop_size) // 2
-        cropped = composite[y_start:y_start+crop_size, x_start:x_start+crop_size]
+        cropped = composite[
+            y_start : y_start + crop_size, x_start : x_start + crop_size
+        ]
 
         axes[idx].imshow(cropped)
-        axes[idx].set_title(f"Cycle {cycle}", fontsize=14, fontweight='bold')
-        axes[idx].axis('off')
+        axes[idx].set_title(f"Cycle {cycle}", fontsize=14, fontweight="bold")
+        axes[idx].axis("off")
 
-    plt.suptitle(f"SBS Images Across Cycles\nP-{PLATE}_W-{WELL}_T-{TILE} (83.5% mapping rate)",
-                 fontsize=16, fontweight='bold')
+    plt.suptitle(
+        f"SBS Images Across Cycles\nP-{PLATE}_W-{WELL}_T-{TILE} (83.5% mapping rate)",
+        fontsize=16,
+        fontweight="bold",
+    )
 
     # Add legend for channels
     legend_text = "Channels: G(green) T(red) A(magenta) C(cyan)"
-    fig.text(0.5, 0.02, legend_text, ha='center', fontsize=12, style='italic')
+    fig.text(0.5, 0.02, legend_text, ha="center", fontsize=12, style="italic")
 
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
     output_path = OUTPUT_DIR / "sbs_cycles_montage.png"
-    plt.savefig(output_path, dpi=150, bbox_inches='tight', facecolor='white')
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor="white")
     # Also save as PDF
     pdf_path = output_path.with_suffix(".pdf")
-    plt.savefig(pdf_path, dpi=150, bbox_inches='tight', facecolor='white')
+    plt.savefig(pdf_path, dpi=150, bbox_inches="tight", facecolor="white")
     print(f"\nSaved montage to: {output_path}")
     print(f"Saved montage to: {pdf_path}")
 
@@ -139,23 +144,26 @@ def main():
         composite = create_sbs_composite(img)
 
         axes2[idx].imshow(composite)
-        axes2[idx].set_title(f"Cycle {cycle}", fontsize=14, fontweight='bold')
-        axes2[idx].axis('off')
+        axes2[idx].set_title(f"Cycle {cycle}", fontsize=14, fontweight="bold")
+        axes2[idx].axis("off")
 
-    plt.suptitle(f"SBS Images Across Cycles (Full FOV)\nP-{PLATE}_W-{WELL}_T-{TILE} (83.5% mapping rate)",
-                 fontsize=16, fontweight='bold')
-    fig2.text(0.5, 0.02, legend_text, ha='center', fontsize=12, style='italic')
+    plt.suptitle(
+        f"SBS Images Across Cycles (Full FOV)\nP-{PLATE}_W-{WELL}_T-{TILE} (83.5% mapping rate)",
+        fontsize=16,
+        fontweight="bold",
+    )
+    fig2.text(0.5, 0.02, legend_text, ha="center", fontsize=12, style="italic")
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
 
     output_path_full = OUTPUT_DIR / "sbs_cycles_montage_full.png"
-    plt.savefig(output_path_full, dpi=100, bbox_inches='tight', facecolor='white')
+    plt.savefig(output_path_full, dpi=100, bbox_inches="tight", facecolor="white")
     # Also save as PDF
     pdf_path_full = output_path_full.with_suffix(".pdf")
-    plt.savefig(pdf_path_full, dpi=100, bbox_inches='tight', facecolor='white')
+    plt.savefig(pdf_path_full, dpi=100, bbox_inches="tight", facecolor="white")
     print(f"Saved full FOV montage to: {output_path_full}")
     print(f"Saved full FOV montage to: {pdf_path_full}")
 
-    plt.close('all')
+    plt.close("all")
 
 
 if __name__ == "__main__":

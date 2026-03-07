@@ -15,7 +15,6 @@ Usage:
 """
 
 import argparse
-import string
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -24,7 +23,6 @@ import pandas as pd
 import seaborn as sns
 
 # Import plot_plate_heatmap from generate_heatmaps
-from generate_heatmaps import plot_plate_heatmap
 
 # Base path for brieflow output
 BRIEFLOW_OUTPUT = Path("/mnt/data/blainey/whitney-analysis/analysis/brieflow_output")
@@ -43,36 +41,56 @@ FIGURE_SIZE = (6.5, 5.5)
 
 
 def setup_style():
-    """Set up publication-quality matplotlib style with sans-serif font."""
+    """Set up publication-quality matplotlib style with Myriad Pro font."""
     plt.style.use("seaborn-v0_8-whitegrid")
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "font.sans-serif": ["Arial", "DejaVu Sans", "Liberation Sans", "Helvetica"],
-        "font.size": 11,
-        "axes.titlesize": 14,
-        "axes.labelsize": 12,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
-        "legend.fontsize": 10,
-        "figure.facecolor": "white",
-        "axes.facecolor": "white",
-        "savefig.facecolor": "white",
-        "figure.dpi": 150,
-        "savefig.dpi": 300,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-    })
+    plt.rcParams.update(
+        {
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Myriad Pro", "Arial", "DejaVu Sans", "Helvetica"],
+            "font.size": 11,
+            "axes.titlesize": 14,
+            "axes.labelsize": 12,
+            "xtick.labelsize": 10,
+            "ytick.labelsize": 10,
+            "legend.fontsize": 10,
+            "figure.facecolor": "white",
+            "axes.facecolor": "white",
+            "savefig.facecolor": "white",
+            "figure.dpi": 150,
+            "savefig.dpi": 600,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
+            "svg.fonttype": "none",
+        }
+    )
+
+
+def save_figure(fig, output_path, dpi=600):
+    """Save figure as PNG (600 dpi), PDF, and SVG."""
+    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(str(output_path).replace(".png", ".pdf"), bbox_inches="tight")
+    fig.savefig(str(output_path).replace(".png", ".svg"), bbox_inches="tight")
+    print(f"Saved: {output_path} (.png, .pdf, .svg)")
 
 
 # =============================================================================
 # Data Loading Functions
 # =============================================================================
 
+
 def load_heatmap_data():
     """Load cell mapping heatmap data from both plates (all wells)."""
     dfs = []
     for plate in PLATES:
-        path = BRIEFLOW_OUTPUT / "sbs" / "eval" / "mapping" / f"{plate}__cell_mapping_heatmap_one.tsv"
+        path = (
+            BRIEFLOW_OUTPUT
+            / "sbs"
+            / "eval"
+            / "mapping"
+            / f"{plate}__cell_mapping_heatmap_one.tsv"
+        )
         if path.exists():
             df = pd.read_csv(path, sep="\t")
             df["plate"] = plate
@@ -93,7 +111,13 @@ def load_cell_density_data():
     """Load cell density heatmap data from phenotype eval (all wells)."""
     dfs = []
     for plate in PLATES:
-        path = BRIEFLOW_OUTPUT / "phenotype" / "eval" / "segmentation" / f"{plate}__cell_density_heatmap.tsv"
+        path = (
+            BRIEFLOW_OUTPUT
+            / "phenotype"
+            / "eval"
+            / "segmentation"
+            / f"{plate}__cell_density_heatmap.tsv"
+        )
         if path.exists():
             df = pd.read_csv(path, sep="\t")
             df["plate"] = plate
@@ -109,7 +133,13 @@ def load_mapping_overview():
     """Load mapping overview data from both plates."""
     dfs = []
     for plate in PLATES:
-        path = BRIEFLOW_OUTPUT / "sbs" / "eval" / "mapping" / f"{plate}__mapping_overview.tsv"
+        path = (
+            BRIEFLOW_OUTPUT
+            / "sbs"
+            / "eval"
+            / "mapping"
+            / f"{plate}__mapping_overview.tsv"
+        )
         if path.exists():
             df = pd.read_csv(path, sep="\t")
             df["plate"] = plate
@@ -148,7 +178,12 @@ def load_reads_data(sample_frac=0.1):
 
     for plate in PLATES:
         for well in WELLS:
-            path = BRIEFLOW_OUTPUT / "sbs" / "parquets" / f"{plate}_W-{well}__reads.parquet"
+            path = (
+                BRIEFLOW_OUTPUT
+                / "sbs"
+                / "parquets"
+                / f"{plate}_W-{well}__reads.parquet"
+            )
             if path.exists():
                 df = pd.read_parquet(path, columns=["barcode"] + q_cols)
                 # Sample for speed
@@ -166,7 +201,12 @@ def load_reads_data(sample_frac=0.1):
 
 def load_perturbation_counts():
     """Load cell counts per perturbation from aggregated TSV."""
-    path = BRIEFLOW_OUTPUT / "aggregate" / "tsvs" / "CeCl-all_ChCo-Hoescht_COX4_AGP_ConA__aggregated.tsv"
+    path = (
+        BRIEFLOW_OUTPUT
+        / "aggregate"
+        / "tsvs"
+        / "CeCl-all_ChCo-Hoescht_COX4_AGP_ConA__aggregated.tsv"
+    )
     if not path.exists():
         raise FileNotFoundError(f"Aggregated file not found: {path}")
 
@@ -177,6 +217,7 @@ def load_perturbation_counts():
 # =============================================================================
 # Panel A: Spatial Heatmaps (averaged across ALL wells)
 # =============================================================================
+
 
 def compute_tile_average(data, value_col):
     """
@@ -210,7 +251,13 @@ def load_sbs_tile_positions():
     Load actual SBS tile positions from metadata.
     Returns DataFrame with tile, x_pos, y_pos.
     """
-    path = BRIEFLOW_OUTPUT / "preprocess" / "metadata" / "sbs" / "P-1_W-A1__combined_metadata.parquet"
+    path = (
+        BRIEFLOW_OUTPUT
+        / "preprocess"
+        / "metadata"
+        / "sbs"
+        / "P-1_W-A1__combined_metadata.parquet"
+    )
     df = pd.read_parquet(path)
     # Filter to cycle 1 to get unique tile positions
     df_c1 = df[df["cycle"] == 1]
@@ -266,9 +313,54 @@ def create_tile_grid(shape, snake_sites=True):
     elif shape == "squid_ph":
         # Spatially accurate layout for Squid microscope phenotype tiles (1732 tiles)
         rows = [
-            4, 14, 18, 22, 26, 28, 32, 34, 36, 36, 38, 40, 40, 42, 42, 44, 44,
-            46, 46, 46, 46, 46, 48, 48, 48, 48, 46, 46, 46, 46, 46, 44, 44,
-            42, 42, 40, 40, 38, 36, 36, 34, 32, 28, 26, 22, 18, 14, 4,
+            4,
+            14,
+            18,
+            22,
+            26,
+            28,
+            32,
+            34,
+            36,
+            36,
+            38,
+            40,
+            40,
+            42,
+            42,
+            44,
+            44,
+            46,
+            46,
+            46,
+            46,
+            46,
+            48,
+            48,
+            48,
+            48,
+            46,
+            46,
+            46,
+            46,
+            46,
+            44,
+            44,
+            42,
+            42,
+            40,
+            40,
+            38,
+            36,
+            36,
+            34,
+            32,
+            28,
+            26,
+            22,
+            18,
+            14,
+            4,
         ]
 
         r, c = len(rows), max(rows)
@@ -278,7 +370,9 @@ def create_tile_grid(shape, snake_sites=True):
         next_site = 0
         for row, row_sites in enumerate(rows):
             start = int((c - row_sites) / 2)
-            grid[row, start : start + row_sites] = range(next_site, next_site + row_sites)
+            grid[row, start : start + row_sites] = range(
+                next_site, next_site + row_sites
+            )
             next_site += row_sites
 
         if snake_sites:
@@ -330,17 +424,19 @@ def plot_panel_a_combined(cell_mapping_data, cell_density_data, output_path):
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=FIGURE_SIZE)
 
     # Set background color for masked/NaN areas
-    ax1.set_facecolor('#e0e0e0')
-    ax2.set_facecolor('#e0e0e0')
+    ax1.set_facecolor("#e0e0e0")
+    ax2.set_facecolor("#e0e0e0")
 
     # Left: Cell mapping (viridis colormap)
     vmin1, vmax1 = avg_mapping["fraction"].min(), avg_mapping["fraction"].max()
     im1 = ax1.imshow(sbs_masked, cmap="viridis", vmin=vmin1, vmax=vmax1, aspect="equal")
     ax1.axis("off")
-    ax1.set_anchor('C')  # Center vertically
+    ax1.set_anchor("C")  # Center vertically
 
     # Horizontal colorbar for left plot (descriptive label replaces subtitle)
-    cbar1 = fig.colorbar(im1, ax=ax1, orientation="horizontal", pad=0.08, shrink=0.7, aspect=20)
+    cbar1 = fig.colorbar(
+        im1, ax=ax1, orientation="horizontal", pad=0.08, shrink=0.7, aspect=20
+    )
     cbar1.ax.tick_params(labelsize=8)
     cbar1.set_label("Fraction of Cells Mapping to 1 Gene (ISS)", fontsize=8)
 
@@ -348,10 +444,12 @@ def plot_panel_a_combined(cell_mapping_data, cell_density_data, output_path):
     vmin2, vmax2 = avg_density["cell count"].min(), avg_density["cell count"].max()
     im2 = ax2.imshow(ph_masked, cmap="plasma", vmin=vmin2, vmax=vmax2, aspect="equal")
     ax2.axis("off")
-    ax2.set_anchor('C')  # Center vertically
+    ax2.set_anchor("C")  # Center vertically
 
     # Horizontal colorbar for right plot
-    cbar2 = fig.colorbar(im2, ax=ax2, orientation="horizontal", pad=0.08, shrink=0.7, aspect=20)
+    cbar2 = fig.colorbar(
+        im2, ax=ax2, orientation="horizontal", pad=0.08, shrink=0.7, aspect=20
+    )
     cbar2.ax.tick_params(labelsize=8)
     cbar2.set_label("Cells per Tile (Phenotyping)", fontsize=8)
 
@@ -359,16 +457,17 @@ def plot_panel_a_combined(cell_mapping_data, cell_density_data, output_path):
     fig.subplots_adjust(top=0.95, bottom=0.15, wspace=0.12, left=0.05, right=0.95)
 
     # Top level title - position relative to figure
-    fig.suptitle("Spatial QC (Averaged Across All Wells)", fontsize=12, fontweight="bold", y=0.99)
-    fig.savefig(output_path, dpi=300, bbox_inches="tight")
-    fig.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
+    fig.suptitle(
+        "Spatial QC (Averaged Across All Wells)", fontsize=12, fontweight="bold", y=0.99
+    )
+    save_figure(fig, output_path)
     plt.close(fig)
-    print(f"Saved: {output_path}")
 
 
 # =============================================================================
 # Panel B: Cell Count Boxplot
 # =============================================================================
+
 
 def plot_panel_b_boxplot(data, output_path):
     """
@@ -380,13 +479,16 @@ def plot_panel_b_boxplot(data, output_path):
         "1+ Barcode": "1_or_more_barcodes__count",
         "1 Barcode": "1_barcode_cells__count",
         "1+ Gene": "1_or_more_genes__count",
-        "1 Gene": "1_gene_cells__count"
+        "1 Gene": "1_gene_cells__count",
     }
 
     # Colors matching Panel C
-    colors = {"1+ Barcode": "#3498db", "1 Barcode": "#2ecc71",
-              "1+ Gene": "#9b59b6", "1 Gene": "#e74c3c"}
-    color_list = list(colors.values())
+    colors = {
+        "1+ Barcode": "#3498db",
+        "1 Barcode": "#2ecc71",
+        "1+ Gene": "#9b59b6",
+        "1 Gene": "#e74c3c",
+    }
 
     # Markers for plates
     markers = {"Plate 1": "o", "Plate 2": "s"}  # circle and square
@@ -395,12 +497,14 @@ def plot_panel_b_boxplot(data, output_path):
     plot_data = []
     for _, row in data.iterrows():
         for cat_name, col_name in categories.items():
-            plot_data.append({
-                "Category": cat_name,
-                "Cell Count": row[col_name],
-                "Plate": row["plate"].replace("P-", "Plate "),
-                "Well": row["well"]
-            })
+            plot_data.append(
+                {
+                    "Category": cat_name,
+                    "Cell Count": row[col_name],
+                    "Plate": row["plate"].replace("P-", "Plate "),
+                    "Well": row["well"],
+                }
+            )
 
     plot_df = pd.DataFrame(plot_data)
 
@@ -418,7 +522,7 @@ def plot_panel_b_boxplot(data, output_path):
         order=list(categories.keys()),
         legend=False,
         zorder=1,
-        showfliers=False
+        showfliers=False,
     )
 
     # Add individual points - plot each plate separately with different markers
@@ -430,15 +534,24 @@ def plot_panel_b_boxplot(data, output_path):
         for cat_name in categories.keys():
             cat_data = plate_data[plate_data["Category"] == cat_name]
             # Add jitter
-            x_pos = cat_positions[cat_name] + np.random.uniform(-0.15, 0.15, len(cat_data))
-            ax.scatter(x_pos, cat_data["Cell Count"],
-                      marker=marker, s=70, facecolors=colors[cat_name],
-                      edgecolors="black", linewidth=1.2, alpha=1.0,
-                      zorder=10,
-                      label=plate if cat_name == "1+ Barcode" else "")
+            x_pos = cat_positions[cat_name] + np.random.uniform(
+                -0.15, 0.15, len(cat_data)
+            )
+            ax.scatter(
+                x_pos,
+                cat_data["Cell Count"],
+                marker=marker,
+                s=70,
+                facecolors=colors[cat_name],
+                edgecolors="black",
+                linewidth=1.2,
+                alpha=1.0,
+                zorder=10,
+                label=plate if cat_name == "1+ Barcode" else "",
+            )
 
     # Format y-axis in millions
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f"{x/1e6:.1f}M"))
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f"{x / 1e6:.1f}M"))
 
     ax.set_ylabel("Number of Cells")
     ax.set_xlabel("")
@@ -446,24 +559,40 @@ def plot_panel_b_boxplot(data, output_path):
 
     # Create custom legend with black markers (shape only, no color)
     from matplotlib.lines import Line2D
+
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', markerfacecolor='black',
-               markeredgecolor='black', markersize=8, label='Plate 1'),
-        Line2D([0], [0], marker='s', color='w', markerfacecolor='black',
-               markeredgecolor='black', markersize=8, label='Plate 2')
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="w",
+            markerfacecolor="black",
+            markeredgecolor="black",
+            markersize=8,
+            label="Plate 1",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="s",
+            color="w",
+            markerfacecolor="black",
+            markeredgecolor="black",
+            markersize=8,
+            label="Plate 2",
+        ),
     ]
     ax.legend(handles=legend_elements, loc="upper right")
 
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
+    save_figure(fig, output_path)
     plt.close()
-    print(f"Saved: {output_path}")
 
 
 # =============================================================================
 # Panel C: Mapping Percentage Bar Plot
 # =============================================================================
+
 
 def plot_panel_c_barplot(data, output_path):
     """
@@ -474,7 +603,7 @@ def plot_panel_c_barplot(data, output_path):
         "1+ Barcode": data["1_or_more_barcodes__percent"],
         "1 Barcode": data["1_barcode_cells__percent"],
         "1+ Gene": data["1_or_more_genes__percent"],
-        "1 Gene": data["1_gene_cells__percent"]
+        "1 Gene": data["1_gene_cells__percent"],
     }
 
     fig, ax = plt.subplots(figsize=FIGURE_SIZE)
@@ -485,8 +614,16 @@ def plot_panel_c_barplot(data, output_path):
 
     colors = ["#3498db", "#2ecc71", "#9b59b6", "#e74c3c"]
 
-    bars = ax.bar(labels, means, yerr=stds, capsize=5,
-                  color=colors, edgecolor="black", linewidth=1.5, alpha=0.85)
+    bars = ax.bar(
+        labels,
+        means,
+        yerr=stds,
+        capsize=5,
+        color=colors,
+        edgecolor="black",
+        linewidth=1.5,
+        alpha=0.85,
+    )
 
     ax.set_ylim(0, 100)
     ax.set_ylabel("Percent (%)")
@@ -495,19 +632,25 @@ def plot_panel_c_barplot(data, output_path):
 
     # Add value labels on bars
     for bar, mean, std in zip(bars, means, stds):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + std + 2,
-                f"{mean:.1f}%", ha="center", va="bottom", fontsize=10, fontweight="bold")
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + std + 2,
+            f"{mean:.1f}%",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
 
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
+    save_figure(fig, output_path)
     plt.close()
-    print(f"Saved: {output_path}")
 
 
 # =============================================================================
 # Panel D: Barcode Prefix Matching
 # =============================================================================
+
 
 def compute_prefix_matching(reads_df, library_barcodes):
     """
@@ -523,7 +666,9 @@ def compute_prefix_matching(reads_df, library_barcodes):
     # Build prefix sets for each length
     prefix_sets = {}
     for length in range(1, 13):
-        prefix_sets[length] = set(bc[:length] for bc in library_barcodes if len(bc) >= length)
+        prefix_sets[length] = set(
+            bc[:length] for bc in library_barcodes if len(bc) >= length
+        )
 
     results = []
 
@@ -539,12 +684,14 @@ def compute_prefix_matching(reads_df, library_barcodes):
             matching = prefixes.isin(prefix_sets[length]).sum()
             frac = matching / total
 
-            results.append({
-                "plate": plate,
-                "well": well,
-                "prefix_length": length,
-                "fraction_matching": frac
-            })
+            results.append(
+                {
+                    "plate": plate,
+                    "well": well,
+                    "prefix_length": length,
+                    "fraction_matching": frac,
+                }
+            )
 
     return pd.DataFrame(results)
 
@@ -558,26 +705,54 @@ def plot_panel_d_prefix_matching(prefix_data, output_path):
     # Per-well lines (thin, colored by plate)
     for (plate, well), group in prefix_data.groupby(["plate", "well"]):
         color = PALETTE_DE[plate]
-        ax.plot(group["prefix_length"], group["fraction_matching"],
-                linewidth=1, alpha=0.5, color=color)
+        ax.plot(
+            group["prefix_length"],
+            group["fraction_matching"],
+            linewidth=1,
+            alpha=0.5,
+            color=color,
+        )
 
     # Per-plate averages
     for plate in PLATES:
         plate_data = prefix_data[prefix_data["plate"] == plate]
         avg = plate_data.groupby("prefix_length")["fraction_matching"].mean()
-        ax.plot(avg.index, avg.values, linewidth=2.5, color=PALETTE_DE[plate],
-                marker="o", markersize=5, label=f"{plate.replace('P-', 'Plate ')}")
+        ax.plot(
+            avg.index,
+            avg.values,
+            linewidth=2.5,
+            color=PALETTE_DE[plate],
+            marker="o",
+            markersize=5,
+            label=f"{plate.replace('P-', 'Plate ')}",
+        )
 
     # Overall average (thick black line)
     overall = prefix_data.groupby("prefix_length")["fraction_matching"].mean()
-    ax.plot(overall.index, overall.values, linewidth=3.5, color="black",
-            marker="o", markersize=6, label="All Wells Avg")
+    ax.plot(
+        overall.index,
+        overall.values,
+        linewidth=3.5,
+        color="black",
+        marker="o",
+        markersize=6,
+        label="All Wells Avg",
+    )
 
     # Random expectation line
     lengths = range(1, 13)
-    random_exp = [(1/4)**n for n in lengths]
-    ax.plot(lengths, random_exp, linewidth=2, color="gray", linestyle="--",
-            marker=".", markersize=4, alpha=0.7, label="Random (1/4)ⁿ")
+    random_exp = [(1 / 4) ** n for n in lengths]
+    ax.plot(
+        lengths,
+        random_exp,
+        linewidth=2,
+        color="gray",
+        linestyle="--",
+        marker=".",
+        markersize=4,
+        alpha=0.7,
+        label="Random (1/4)^n",
+    )
 
     ax.set_xlabel("Barcode Prefix Length (bases)")
     ax.set_ylabel("Fraction of Reads Matching Library")
@@ -588,15 +763,14 @@ def plot_panel_d_prefix_matching(prefix_data, output_path):
     ax.legend(loc="upper right", fontsize=9)
 
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
+    save_figure(fig, output_path)
     plt.close()
-    print(f"Saved: {output_path}")
 
 
 # =============================================================================
 # Panel E: Q-Scores Across Cycles
 # =============================================================================
+
 
 def plot_panel_e_qscores(reads_df, output_path):
     """
@@ -618,13 +792,27 @@ def plot_panel_e_qscores(reads_df, output_path):
     for plate in PLATES:
         plate_data = reads_df[reads_df["plate"] == plate]
         means = [plate_data[q].mean() for q in q_cols]
-        ax.plot(cycles, means, linewidth=2.5, color=PALETTE_DE[plate],
-                marker="o", markersize=5, label=f"{plate.replace('P-', 'Plate ')}")
+        ax.plot(
+            cycles,
+            means,
+            linewidth=2.5,
+            color=PALETTE_DE[plate],
+            marker="o",
+            markersize=5,
+            label=f"{plate.replace('P-', 'Plate ')}",
+        )
 
     # Overall average (thick black line)
     overall_means = [reads_df[q].mean() for q in q_cols]
-    ax.plot(cycles, overall_means, linewidth=3.5, color="black",
-            marker="o", markersize=6, label="All Wells Avg")
+    ax.plot(
+        cycles,
+        overall_means,
+        linewidth=3.5,
+        color="black",
+        marker="o",
+        markersize=6,
+        label="All Wells Avg",
+    )
 
     ax.set_xlabel("Cycle")
     ax.set_ylabel("Q-score")
@@ -639,59 +827,127 @@ def plot_panel_e_qscores(reads_df, output_path):
     ax.set_ylim(max(0, y_min), min(1, y_max))
 
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
+    save_figure(fig, output_path)
     plt.close()
-    print(f"Saved: {output_path}")
 
 
 # =============================================================================
-# Panel F: KDE of Cells per Perturbation
+# Panel F: Cells per Perturbation by Category
 # =============================================================================
 
-def plot_panel_f_kde(data, output_path):
+# Category colors
+CATEGORY_COLORS = {
+    "Essential genes": "#d67777",
+    "Non-essential genes": "#7dd3c0",
+    "Intergenic controls": "#999999",
+    "Noncutting controls": "#666666",
+    "Olfactory receptor controls": "#444444",
+}
+
+CATEGORY_ORDER = [
+    "Essential genes",
+    "Non-essential genes",
+    "Intergenic controls",
+    "Noncutting controls",
+    "Olfactory receptor controls",
+]
+
+
+def categorize_perturbations(data, essential_genes):
+    """Categorize perturbations into essential, non-essential, and control types."""
+    data = data.copy()
+    gs = data["gene_symbol_0"]
+
+    conditions = [
+        gs.str.startswith("nontargeting_intergenic", na=False),
+        gs.str.startswith("nontargeting_noncutting", na=False),
+        gs.str.startswith("nontargeting_or", na=False),
+        gs.isin(essential_genes),
+    ]
+    choices = [
+        "Intergenic controls",
+        "Noncutting controls",
+        "Olfactory receptor controls",
+        "Essential genes",
+    ]
+    data["category"] = np.select(conditions, choices, default="Non-essential genes")
+    return data
+
+
+def plot_panel_f_histogram(data, essential_genes, output_path):
     """
-    Panel F: KDE of cells per perturbation.
+    Panel F: Split histogram of cells per perturbation by category.
+    Non-essential plotted first, then essential on top so it's visible.
+    Controls plotted last on top.
     """
+    data = categorize_perturbations(data, essential_genes)
+    bins = np.arange(0, data["cell_count"].quantile(0.99) + 20, 20)
+
     fig, ax = plt.subplots(figsize=FIGURE_SIZE)
 
-    # Plot KDE
-    sns.kdeplot(data["cell_count"], ax=ax, fill=True, color="#1abc9c", alpha=0.6, linewidth=2)
+    # Plot order: non-essential first (back), then essential, then controls on top
+    plot_order = [
+        "Non-essential genes",
+        "Essential genes",
+        "Intergenic controls",
+        "Noncutting controls",
+        "Olfactory receptor controls",
+    ]
 
-    # Add median reference line
-    median_val = data["cell_count"].median()
-    ax.axvline(median_val, color="#e74c3c", linestyle="--", linewidth=2.5,
-               label=f"Median = {median_val:.0f}")
+    for category in plot_order:
+        subset = data[data["category"] == category]
+        if len(subset) == 0:
+            continue
 
-    ax.set_xlabel("Number of Cells per Perturbation")
-    ax.set_ylabel("Density")
-    ax.set_title("Cells per Perturbation Distribution", fontweight="bold")
-    ax.legend(loc="upper right", fontsize=10)
+        ax.hist(
+            subset["cell_count"],
+            bins=bins,
+            alpha=0.6,
+            color=CATEGORY_COLORS[category],
+            label=f"{category} (n={len(subset)})",
+            edgecolor="white",
+            linewidth=0.5,
+        )
 
-    # Remove y-axis tick labels (keep axis label)
-    ax.set_yticklabels([])
+        # Mean dashed line
+        mean_val = subset["cell_count"].mean()
+        ax.axvline(
+            mean_val,
+            color=CATEGORY_COLORS[category],
+            linestyle="--",
+            linewidth=1.5,
+            alpha=0.8,
+        )
 
-    # Set x-axis limit to focus on main distribution
-    q99 = data["cell_count"].quantile(0.99)
-    ax.set_xlim(0, q99)
+    ax.set_xlabel("Cells per Perturbation")
+    ax.set_ylabel("Count")
+    ax.set_title("Cells per Perturbation by Category", fontweight="bold")
+    ax.legend(loc="upper right", fontsize=8)
+    ax.set_xlim(0, bins[-1])
 
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300, bbox_inches="tight")
-    plt.savefig(str(output_path).replace(".png", ".pdf"), dpi=300, bbox_inches="tight")
+    save_figure(fig, output_path)
     plt.close()
-    print(f"Saved: {output_path}")
 
 
 # =============================================================================
 # Main
 # =============================================================================
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Generate QC panels for Lander presentation")
-    parser.add_argument("--output-dir", type=str, default="figures",
-                       help="Output directory for figures")
-    parser.add_argument("--sample-reads", type=float, default=0.1,
-                       help="Fraction of reads to sample (0-1, default 0.1)")
+    parser = argparse.ArgumentParser(
+        description="Generate QC panels for Lander presentation"
+    )
+    parser.add_argument(
+        "--output-dir", type=str, default="figures", help="Output directory for figures"
+    )
+    parser.add_argument(
+        "--sample-reads",
+        type=float,
+        default=0.1,
+        help="Fraction of reads to sample (0-1, default 0.1)",
+    )
     args = parser.parse_args()
 
     # Setup
@@ -715,7 +971,7 @@ def main():
     mapping_overview = load_mapping_overview()
 
     # Load data for Panels D-E (from parquets)
-    print(f"\nLoading reads data (sampling {args.sample_reads*100:.0f}%)...")
+    print(f"\nLoading reads data (sampling {args.sample_reads * 100:.0f}%)...")
     reads_data = load_reads_data(sample_frac=args.sample_reads)
 
     print("  Loading barcode library...")
@@ -725,6 +981,12 @@ def main():
     print("  Loading perturbation counts...")
     perturbation_data = load_perturbation_counts()
 
+    print("  Loading essential genes list...")
+    essential_genes_file = Path(__file__).parent / "essential_genes.tsv"
+    essential_genes = set(
+        pd.read_csv(essential_genes_file, sep="\t")["gene_symbol_0"].dropna().unique()
+    )
+
     # Generate panels
     print("\n" + "=" * 60)
     print("Generating panels...")
@@ -732,7 +994,9 @@ def main():
 
     # Panel A: Combined heatmap (cell mapping + cell density, averaged across all wells)
     print("\nPanel A: Combined heatmap (cell mapping + cell density)...")
-    plot_panel_a_combined(heatmap_data, density_data, output_dir / "qc_panel_a_heatmap.png")
+    plot_panel_a_combined(
+        heatmap_data, density_data, output_dir / "qc_panel_a_heatmap.png"
+    )
 
     # Panel B: Cell count boxplot
     print("Panel B: Cell count boxplot...")
@@ -745,15 +1009,19 @@ def main():
     # Panel D: Barcode prefix matching
     print("Panel D: Computing barcode prefix matching...")
     prefix_data = compute_prefix_matching(reads_data, library_barcodes)
-    plot_panel_d_prefix_matching(prefix_data, output_dir / "qc_panel_d_prefix_matching.png")
+    plot_panel_d_prefix_matching(
+        prefix_data, output_dir / "qc_panel_d_prefix_matching.png"
+    )
 
     # Panel E: Q-scores
     print("Panel E: Q-scores across cycles...")
     plot_panel_e_qscores(reads_data, output_dir / "qc_panel_e_qscores.png")
 
-    # Panel F: KDE
-    print("Panel F: Cells per perturbation KDE...")
-    plot_panel_f_kde(perturbation_data, output_dir / "qc_panel_f_kde.png")
+    # Panel F: Cells per perturbation by category
+    print("Panel F: Cells per perturbation histogram...")
+    plot_panel_f_histogram(
+        perturbation_data, essential_genes, output_dir / "qc_panel_f_kde.png"
+    )
 
     print("\n" + "=" * 60)
     print(f"All panels saved to: {output_dir}/")

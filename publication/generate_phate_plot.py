@@ -22,8 +22,15 @@ BRIEFLOW_OUTPUT = Path("/mnt/data/blainey/whitney-analysis/analysis/brieflow_out
 WORKING_DIR = Path("/mnt/data/blainey/whitney-analysis")
 
 # Input files
-PHATE_FILE = BRIEFLOW_OUTPUT / "cluster" / "Hoescht_COX4_AGP_ConA" / "all" / "20" / "phate_leiden_clustering.tsv"
-ESSENTIAL_GENES_FILE = WORKING_DIR / "essential_genes.tsv"
+PHATE_FILE = (
+    BRIEFLOW_OUTPUT
+    / "cluster"
+    / "Hoescht_COX4_AGP_ConA"
+    / "all"
+    / "20"
+    / "phate_leiden_clustering.tsv"
+)
+ESSENTIAL_GENES_FILE = Path(__file__).parent / "essential_genes.tsv"
 
 # Standard figure size (matching QC panels style)
 FIGURE_SIZE = (8, 7)
@@ -47,28 +54,41 @@ LABELS = {
 
 
 def setup_style():
-    """Set up publication-quality matplotlib style with sans-serif font."""
+    """Set up publication-quality matplotlib style with Myriad Pro font."""
     plt.style.use("seaborn-v0_8-white")
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "font.sans-serif": ["Arial", "DejaVu Sans", "Liberation Sans", "Helvetica"],
-        "font.size": 11,
-        "axes.titlesize": 14,
-        "axes.labelsize": 12,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
-        "legend.fontsize": 10,
-        "figure.facecolor": "white",
-        "axes.facecolor": "white",
-        "savefig.facecolor": "white",
-        "figure.dpi": 150,
-        "savefig.dpi": 300,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-        "axes.spines.bottom": False,
-        "axes.spines.left": False,
-        "axes.grid": False,
-    })
+    plt.rcParams.update(
+        {
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Myriad Pro", "Arial", "DejaVu Sans", "Helvetica"],
+            "font.size": 11,
+            "axes.titlesize": 14,
+            "axes.labelsize": 12,
+            "xtick.labelsize": 10,
+            "ytick.labelsize": 10,
+            "legend.fontsize": 10,
+            "figure.facecolor": "white",
+            "axes.facecolor": "white",
+            "savefig.facecolor": "white",
+            "figure.dpi": 150,
+            "savefig.dpi": 600,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "axes.spines.bottom": False,
+            "axes.spines.left": False,
+            "axes.grid": False,
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
+            "svg.fonttype": "none",
+        }
+    )
+
+
+def save_figure(fig, output_path, dpi=600):
+    """Save figure as PNG (600 dpi), PDF, and SVG."""
+    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path.with_suffix(".pdf"), bbox_inches="tight")
+    fig.savefig(output_path.with_suffix(".svg"), bbox_inches="tight")
+    print(f"Saved: {output_path} (.png, .pdf, .svg)")
 
 
 def load_phate_data():
@@ -92,7 +112,11 @@ def categorize_genes(df, essential_genes):
     categories = {}
 
     # Identify nontargeting controls
-    for prefix in ["nontargeting_intergenic", "nontargeting_noncutting", "nontargeting_or"]:
+    for prefix in [
+        "nontargeting_intergenic",
+        "nontargeting_noncutting",
+        "nontargeting_or",
+    ]:
         mask = df["gene_symbol_0"].str.startswith(prefix, na=False)
         categories[prefix] = df[mask].copy()
 
@@ -141,7 +165,11 @@ def plot_phate_map(df, categories, output_path):
         )
 
     # Plot nontargeting controls last (on top, small, muted colors)
-    for prefix in ["nontargeting_intergenic", "nontargeting_noncutting", "nontargeting_or"]:
+    for prefix in [
+        "nontargeting_intergenic",
+        "nontargeting_noncutting",
+        "nontargeting_or",
+    ]:
         cat_df = categories[prefix]
         if len(cat_df) > 0:
             ax.scatter(
@@ -185,13 +213,8 @@ def plot_phate_map(df, categories, output_path):
     )
 
     plt.tight_layout()
-    fig.savefig(output_path, dpi=300, bbox_inches="tight")
-    # Also save as PDF
-    pdf_path = output_path.with_suffix(".pdf")
-    fig.savefig(pdf_path, dpi=300, bbox_inches="tight")
+    save_figure(fig, output_path)
     plt.close(fig)
-    print(f"Saved: {output_path}")
-    print(f"Saved: {pdf_path}")
 
 
 def print_summary(categories):
@@ -200,7 +223,11 @@ def print_summary(categories):
     print("-" * 40)
     print(f"Background genes: {len(categories['background'])}")
     print(f"Essential genes: {len(categories['essential'])}")
-    for prefix in ["nontargeting_intergenic", "nontargeting_noncutting", "nontargeting_or"]:
+    for prefix in [
+        "nontargeting_intergenic",
+        "nontargeting_noncutting",
+        "nontargeting_or",
+    ]:
         print(f"{LABELS[prefix]}: {len(categories[prefix])}")
     print("-" * 40)
     total = sum(len(v) for v in categories.values())
@@ -209,8 +236,9 @@ def print_summary(categories):
 
 def main():
     parser = argparse.ArgumentParser(description="Generate PHATE map plot")
-    parser.add_argument("--output-dir", type=str, default="figures",
-                       help="Output directory for figures")
+    parser.add_argument(
+        "--output-dir", type=str, default="figures", help="Output directory for figures"
+    )
     args = parser.parse_args()
 
     # Setup

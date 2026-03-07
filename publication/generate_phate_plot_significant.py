@@ -11,7 +11,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import numpy as np
 import pandas as pd
 
 # Base paths
@@ -19,8 +18,25 @@ BRIEFLOW_OUTPUT = Path("/mnt/data/blainey/whitney-analysis/analysis/brieflow_out
 WORKING_DIR = Path("/mnt/data/blainey/whitney-analysis")
 
 # Input files
-PHATE_FILE = BRIEFLOW_OUTPUT / "cluster" / "Hoescht_COX4_AGP_ConA" / "all" / "filtered" / "10" / "phate_leiden_clustering.tsv"
-CLUSTER_SUMMARIES = BRIEFLOW_OUTPUT / "cluster" / "Hoescht_COX4_AGP_ConA" / "all" / "filtered" / "10" / "mozzarellm" / "claude-sonnet-4-5-20250929_results_summaries.tsv"
+PHATE_FILE = (
+    BRIEFLOW_OUTPUT
+    / "cluster"
+    / "Hoescht_COX4_AGP_ConA"
+    / "all"
+    / "filtered"
+    / "10"
+    / "phate_leiden_clustering.tsv"
+)
+CLUSTER_SUMMARIES = (
+    BRIEFLOW_OUTPUT
+    / "cluster"
+    / "Hoescht_COX4_AGP_ConA"
+    / "all"
+    / "filtered"
+    / "10"
+    / "mozzarellm"
+    / "claude-sonnet-4-5-20250929_results_summaries.tsv"
+)
 
 # Standard figure size
 FIGURE_SIZE = (8, 7)
@@ -40,28 +56,41 @@ CONTROL_LABELS = {
 
 
 def setup_style():
-    """Set up publication-quality matplotlib style with sans-serif font."""
+    """Set up publication-quality matplotlib style with Myriad Pro font."""
     plt.style.use("seaborn-v0_8-white")
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "font.sans-serif": ["Arial", "DejaVu Sans", "Liberation Sans", "Helvetica"],
-        "font.size": 11,
-        "axes.titlesize": 14,
-        "axes.labelsize": 12,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
-        "legend.fontsize": 9,
-        "figure.facecolor": "white",
-        "axes.facecolor": "white",
-        "savefig.facecolor": "white",
-        "figure.dpi": 150,
-        "savefig.dpi": 300,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-        "axes.spines.bottom": False,
-        "axes.spines.left": False,
-        "axes.grid": False,
-    })
+    plt.rcParams.update(
+        {
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Myriad Pro", "Arial", "DejaVu Sans", "Helvetica"],
+            "font.size": 11,
+            "axes.titlesize": 14,
+            "axes.labelsize": 12,
+            "xtick.labelsize": 10,
+            "ytick.labelsize": 10,
+            "legend.fontsize": 9,
+            "figure.facecolor": "white",
+            "axes.facecolor": "white",
+            "savefig.facecolor": "white",
+            "figure.dpi": 150,
+            "savefig.dpi": 600,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            "axes.spines.bottom": False,
+            "axes.spines.left": False,
+            "axes.grid": False,
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
+            "svg.fonttype": "none",
+        }
+    )
+
+
+def save_figure(fig, output_path, dpi=600):
+    """Save figure as PNG (600 dpi), PDF, and SVG."""
+    fig.savefig(output_path, dpi=dpi, bbox_inches="tight")
+    fig.savefig(output_path.with_suffix(".pdf"), bbox_inches="tight")
+    fig.savefig(output_path.with_suffix(".svg"), bbox_inches="tight")
+    print(f"Saved: {output_path} (.png, .pdf, .svg)")
 
 
 def load_phate_data():
@@ -95,7 +124,11 @@ def categorize_genes(df, high_conf_clusters):
     categories = {}
 
     # Identify nontargeting controls
-    for prefix in ["nontargeting_intergenic", "nontargeting_noncutting", "nontargeting_or"]:
+    for prefix in [
+        "nontargeting_intergenic",
+        "nontargeting_noncutting",
+        "nontargeting_or",
+    ]:
         mask = df["gene_symbol_0"].str.startswith(prefix, na=False)
         categories[prefix] = df[mask].copy()
 
@@ -151,12 +184,13 @@ def plot_phate_map(df, categories, high_conf_clusters, cluster_colors, output_pa
             # Store centroid for labeling
             cluster_centroids[cluster_id] = (
                 cluster_data["PHATE_0"].mean(),
-                cluster_data["PHATE_1"].mean()
+                cluster_data["PHATE_1"].mean(),
             )
             first_high_conf = False
 
     # Add cluster number labels at centroids with jittering to avoid overlap
     import random
+
     random.seed(42)  # For reproducibility
     for cluster_id, (cx, cy) in cluster_centroids.items():
         # Add small random jitter to label position
@@ -166,11 +200,13 @@ def plot_phate_map(df, categories, high_conf_clusters, cluster_colors, output_pa
             str(cluster_id),
             (cx + jitter_x, cy + jitter_y),
             fontsize=10,
-            fontweight='bold',
-            ha='center',
-            va='center',
-            color='black',
-            bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='none', alpha=0.7),
+            fontweight="bold",
+            ha="center",
+            va="center",
+            color="black",
+            bbox=dict(
+                boxstyle="round,pad=0.2", facecolor="white", edgecolor="none", alpha=0.7
+            ),
             zorder=20,
         )
 
@@ -203,24 +239,61 @@ def plot_phate_map(df, categories, high_conf_clusters, cluster_colors, output_pa
 
     # Custom handler for rainbow rectangle
     class RainbowHandler(HandlerBase):
-        def create_artists(self, legend, orig_handle, xdescent, ydescent, width, height, fontsize, trans):
-            rainbow_colors = ['#e41a1c', '#ff7f00', '#ffff33', '#4daf4a', '#377eb8', '#984ea3']
+        def create_artists(
+            self,
+            legend,
+            orig_handle,
+            xdescent,
+            ydescent,
+            width,
+            height,
+            fontsize,
+            trans,
+        ):
+            rainbow_colors = [
+                "#e41a1c",
+                "#ff7f00",
+                "#ffff33",
+                "#4daf4a",
+                "#377eb8",
+                "#984ea3",
+            ]
             n = len(rainbow_colors)
             patches = []
             w = width / n
             for i, color in enumerate(rainbow_colors):
-                patch = mpatches.Rectangle([xdescent + i * w, ydescent], w, height,
-                                          facecolor=color, edgecolor='none', transform=trans)
+                patch = mpatches.Rectangle(
+                    [xdescent + i * w, ydescent],
+                    w,
+                    height,
+                    facecolor=color,
+                    edgecolor="none",
+                    transform=trans,
+                )
                 patches.append(patch)
             return patches
 
     # Create legend handles
-    other_handle = Line2D([0], [0], marker='o', color='w', markerfacecolor='#000000',
-                          markersize=5, alpha=0.5, label='Other Clusters')
-    rainbow_handle = Rectangle((0, 0), 1, 1, label='LLM High Confidence')
-    intergenic_handle = Line2D([0], [0], marker='o', color='w',
-                               markerfacecolor=CONTROL_COLORS["nontargeting_intergenic"],
-                               markersize=5, label='Intergenic Controls')
+    other_handle = Line2D(
+        [0],
+        [0],
+        marker="o",
+        color="w",
+        markerfacecolor="#000000",
+        markersize=5,
+        alpha=0.5,
+        label="Other Clusters",
+    )
+    rainbow_handle = Rectangle((0, 0), 1, 1, label="LLM High Confidence")
+    intergenic_handle = Line2D(
+        [0],
+        [0],
+        marker="o",
+        color="w",
+        markerfacecolor=CONTROL_COLORS["nontargeting_intergenic"],
+        markersize=5,
+        label="Intergenic Controls",
+    )
 
     ax.legend(
         handles=[other_handle, rainbow_handle, intergenic_handle],
@@ -231,13 +304,8 @@ def plot_phate_map(df, categories, high_conf_clusters, cluster_colors, output_pa
     )
 
     plt.tight_layout()
-    fig.savefig(output_path, dpi=300, bbox_inches="tight")
-    # Also save as PDF
-    pdf_path = output_path.with_suffix(".pdf")
-    fig.savefig(pdf_path, dpi=300, bbox_inches="tight")
+    save_figure(fig, output_path)
     plt.close(fig)
-    print(f"Saved: {output_path}")
-    print(f"Saved: {pdf_path}")
 
 
 def print_summary(categories, high_conf_clusters):
@@ -247,7 +315,11 @@ def print_summary(categories, high_conf_clusters):
     print(f"Background (low/medium conf): {len(categories['background'])}")
     print(f"High-confidence clusters: {len(categories['high_confidence'])}")
     print(f"  Clusters: {sorted(high_conf_clusters)}")
-    for prefix in ["nontargeting_intergenic", "nontargeting_noncutting", "nontargeting_or"]:
+    for prefix in [
+        "nontargeting_intergenic",
+        "nontargeting_noncutting",
+        "nontargeting_or",
+    ]:
         print(f"{CONTROL_LABELS[prefix]}: {len(categories[prefix])}")
     print("-" * 40)
     total = sum(len(v) for v in categories.values())
@@ -255,9 +327,12 @@ def print_summary(categories, high_conf_clusters):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate PHATE map plot for significant perturbations")
-    parser.add_argument("--output-dir", type=str, default="figures",
-                       help="Output directory for figures")
+    parser = argparse.ArgumentParser(
+        description="Generate PHATE map plot for significant perturbations"
+    )
+    parser.add_argument(
+        "--output-dir", type=str, default="figures", help="Output directory for figures"
+    )
     args = parser.parse_args()
 
     # Setup
@@ -276,7 +351,9 @@ def main():
 
     print("Loading cluster summaries...")
     high_conf_clusters = load_high_confidence_clusters()
-    print(f"  Found {len(high_conf_clusters)} high-confidence clusters: {sorted(high_conf_clusters)}")
+    print(
+        f"  Found {len(high_conf_clusters)} high-confidence clusters: {sorted(high_conf_clusters)}"
+    )
 
     # Get cluster colors
     cluster_colors = get_cluster_colormap(high_conf_clusters)
@@ -289,7 +366,9 @@ def main():
     # Generate plot
     print("\nGenerating PHATE map...")
     output_path = output_dir / "phate_map_significant.png"
-    plot_phate_map(phate_df, categories, high_conf_clusters, cluster_colors, output_path)
+    plot_phate_map(
+        phate_df, categories, high_conf_clusters, cluster_colors, output_path
+    )
 
     print("\n" + "=" * 60)
     print(f"Plot saved to: {output_path}")

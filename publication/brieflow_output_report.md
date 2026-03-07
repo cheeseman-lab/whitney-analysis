@@ -112,3 +112,11 @@
 - Cytoskeletal organization and cell morphology regulation (5 clusters)
 - Chromatin remodeling and transcriptional regulation (4 clusters)
 - Endoplasmic reticulum protein processing and quality control (4 clusters)
+
+## 6. Essential Gene Overlap
+
+**Reference essential genes:** 5,049
+
+- **Full clustering**: 4,903 / 21,730 genes are essential (97.1% of reference list)
+- **Filtered clustering (bootstrap-significant)**: 1,196 / 3,715 genes are essential (23.7% of reference list)
+- **High-confidence MozzareLLM clusters (res 27 clusters)**: 459 / 610 genes are essential (9.1% of reference list)
