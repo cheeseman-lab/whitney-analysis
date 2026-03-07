@@ -1,0 +1,59 @@
+gene	gene_type	priority	description	effect_size	neg_log10_pval
+RPS20	established			0.3971287608146667	2.1191864077192086
+RPS8	established			0.6918429136276245	
+RPS7	established			0.2299576848745346	1.3467874862246565
+RPS12	established			0.4803467690944671	2.096910013008056
+RPS13	established			0.4356061816215515	2.5228787452803374
+RPS23	established			0.6064994931221008	
+RPS19	established			0.1489637494087219	0.5800442515102421
+RPS10	established			0.3652997314929962	2.5850266520291822
+RPS24	established			1.110199213027954	
+RPS9	established			0.6086111068725586	
+RPS3A	established			0.8729720115661621	
+RPS14	established			0.307074099779129	1.2104192878355746
+RPS26	established			0.4190675914287567	2.6989700043360187
+RPS2	established			0.6424577236175537	2.5850266520291822
+RPS15	established			0.4755034148693084	3.2218487496163566
+RPS15A	established			0.5514437556266785	
+RPS17	established			0.4801256060600281	
+RPS5	established			0.4681964814662933	3.6989700043360183
+RPS21	established			0.7133908271789551	
+RPS11	established			0.6274764537811279	
+RPSA	established			0.6541075110435486	
+FAU	established			0.5943461656570435	2.795880017344075
+PNO1	established			0.52674800157547	
+UTP11	established			0.2774689197540283	1.4436974992327127
+BMS1	established			0.4017965197563171	2.283996656365201
+PDCD11	established			0.2163969576358795	1.258060922270801
+BYSL	established			0.2119245082139969	0.8551145817128577
+RCL1	established			0.5469444990158081	
+HEATR1	established			0.1863354742527008	0.8309136425129772
+LTV1	established			0.3850595355033874	2.318758762624413
+UTP15	established			0.532423734664917	
+UTP20	established			0.4956876039505005	
+DHX37	established			0.5703246593475342	3.6989700043360183
+DDX21	established			0.1128798052668571	0.4926839599235864
+UTP14A	established			0.4083461165428161	1.609064892896621
+BUD23	established			0.4659913182258606	
+NOP14	established			0.6408406496047974	
+WDR43	established			0.4708690643310547	2.356547323513813
+EIF3B	established			0.3676780164241791	2.096910013008056
+EIF3A	established			0.258290946483612	1.6020599913279625
+EIF3CL	established			0.312388002872467	1.2660007134616131
+EIF3G	established			0.2510029077529907	1.0150228735845066
+EIF3C	established			0.1975814998149871	0.8914349762671656
+POLR1B	established			0.1070592552423477	0.3493040202393891
+RIOK2	established			0.446930855512619	3.6989700043360183
+AATF	established			0.4230121076107025	3.397940008672037
+XPO1	established			0.94213604927063	
+BBIP1	novel	3.0	BBSome component required for primary cilia assembly and microtubule stability. While unexpected in this cluster, some ribosomal proteins have ciliary functions. Connection may be indirect through cytoskeletal organization affecting nucleolar structure.	0.1684725284576416	0.6256183019491178
+DDX18	novel	4.0	RNA helicase with established roles in R-loop resolution and pluripotency maintenance. While it has some connection to nucleolar function and rDNA loci, its role in ribosome biogenesis is partially characterized. Lower priority as the connection is not entirely novel.	0.235424056649208	1.8239087409443189
+DDX10	novel	4.0	RNA helicase primarily characterized in innate immunity and inflammasome activation. No established role in ribosome biogenesis, but DDX family helicases are known to function in RNA processing. Plausible but not highly surprising connection.	0.6184195280075073	2.337242168318426
+SRFBP1	novel	5.0	Involved in transcriptional regulation and SLC2A4 processing. Limited characterization overall. Potential role in regulating ribosomal gene transcription, but function remains unclear.	0.4416521787643432	3.0
+PPRC1	novel	6.0	Coactivator for mitochondrial biogenesis and CREB/NRF1 targets. While it regulates transcription related to cell growth, no direct link to ribosome biogenesis is established. May coordinate mitochondrial and ribosomal biogenesis for cellular growth programs.	0.109085202217102	0.4100503986742922
+ANAPC2	novel	6.0	Core component of APC/C ubiquitin ligase controlling cell cycle progression. No established role in ribosome biogenesis. May regulate stability of ribosome biogenesis factors or coordinate ribosome production with cell cycle.	0.0024340003728866	0.0010435595295137
+ZCCHC9	novel	7.0	Known as transcriptional regulator (NF-kappa-B, serum response element), but limited functional characterization overall. No established role in ribosome biogenesis. May regulate transcription of ribosomal genes or rRNA processing factors.	0.4290350079536438	3.6989700043360183
+HK2	novel	9.0	Hexokinase 2 is well-established in glycolysis and mitochondrial function, with no known role in ribosome biogenesis. Its presence in this highly specific cluster suggests a surprising novel connection between glucose metabolism and ribosome assembly. Could represent metabolic regulation of ribosome production or energy coupling to translation machinery.	0.349432110786438	2.6989700043360187
+RPS10-NUDT3	uncharacterized	7.0	Fusion gene or readthrough transcript with minimal characterization. RPS10 component is established in ribosome function, but the fusion product's role is unclear.	0.3146231770515442	1.7351821769904636
+ENSG00000280148	uncharacterized	9.0	No functional annotation provided. Completely uncharacterized gene clustering with ribosome biogenesis factors. High potential for novel discovery in 40S assembly pathway.	0.671220064163208	
+LOC102723573	uncharacterized	9.0	No functional annotation provided. Completely uncharacterized gene in a highly coherent ribosome biogenesis cluster. Strong candidate for novel ribosomal function.	0.2535454630851745	1.665546248849069

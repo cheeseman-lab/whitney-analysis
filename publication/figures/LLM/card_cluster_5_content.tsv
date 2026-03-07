@@ -1,0 +1,32 @@
+gene	gene_type	priority	description	effect_size	neg_log10_pval
+SMNDC1	established			-0.3509702384471893	1.4975728800155672
+PHF5A	established			-0.6190981864929199	
+PRPF4	established			-0.0824102833867073	0.3998987443086091
+CWC22	established			-0.2389875799417495	1.50584540598156
+U2AF2	established			-0.3233643174171448	2.397940008672037
+PRPF18	established			-0.3089214563369751	2.3187587626244217
+SF3A2	established			0.0874442160129547	0.3746875490383261
+CDC40	established			-0.013596661388874	0.0367790134770115
+LSM3	established			-0.1819294393062591	0.9854794612420767
+SF3B6	established			-0.3827686905860901	2.5850266520291987
+PRPF19	established			-0.1663293689489364	0.9974020192800914
+SF3A3	established			-0.2283241152763366	1.1586405295451456
+PLRG1	established			-0.1795244514942169	0.7964232250220277
+SRSF2	established			-0.1416198760271072	0.7235381958267558
+EFTUD2	established			-0.5436294078826904	2.221848749616356
+ISY1	established			-0.1551204174757003	0.4434562915164854
+LSM5	established			-0.271486222743988	2.1191864077192086
+SF3B1	established			-0.3570761084556579	2.3010299956639986
+PSMD12	novel	2.0	26S proteasome component involved in protein degradation. While proteasome may regulate splicing factor turnover, this is a general protein homeostasis function. Connection is indirect and likely reflects quality control of splicing factors rather than direct splicing role.	-0.0217688456177711	0.078209514341813
+USPL1	novel	3.0	SUMO-specific isopeptidase with established role in snRNA transcription in Cajal bodies and binding to U snRNA genes. Already connected to snRNA biology and splicing machinery, making this association expected rather than novel.	-0.1858408153057098	0.7579557606304489
+SAP30BP	novel	4.0	Involved in transcriptional repression through histone deacetylase activity. While no direct splicing role documented, connection between transcriptional repression and splicing is well-studied. Lower priority as the link is somewhat expected.	0.1217095255851745	0.4116162316212722
+KIN	novel	4.0	Involved in DNA replication, DNA damage response, and has documented RNA binding and potential mRNA processing roles. Connection to RNA processing is already suggested in literature, reducing novelty of splicing association.	-0.4436153769493103	
+MEPCE	novel	5.0	Methyltransferase for 7SK snRNA involved in P-TEFb regulation and transcriptional elongation. Also stabilizes U6 snRNA. While U6 is a spliceosomal component, MEPCE's role in spliceosome function is already partially established through U6 stabilization, reducing novelty.	-0.482928067445755	
+ECD	novel	5.0	Known regulator of p53 stability and cell cycle. Has documented role in pre-mRNA splicing regulation and mRNA nuclear export. Connection to splicing is already established in literature (PubMed:24722212), limiting novelty of this association.	-0.0472826212644577	0.1903056412830761
+BRF2	novel	6.0	RNA polymerase III transcription factor for genes with upstream promoter elements. No established connection to pre-mRNA splicing (Pol II function). May indicate cross-talk between Pol III and Pol II transcription/splicing machinery or shared regulatory mechanisms.	-0.3992819786071777	3.698970004336236
+ZNF335	novel	7.0	Known transcriptional regulator and component of histone methyltransferase complexes controlling neural progenitor proliferation. No documented splicing function. May represent novel link between transcriptional regulation and co-transcriptional splicing, particularly in neural development contexts.	-0.2045724391937255	1.1390633792999063
+CXXC1	novel	7.0	Characterized as transcriptional activator binding unmethylated CpG motifs. No known splicing role. Clustering suggests potential novel function in coupling DNA methylation status to splicing decisions or recruiting splicing machinery to specific genomic loci.	-0.1307684332132339	0.5295895090240692
+MBD6	novel	8.0	Well-characterized as component of PR-DUB complex involved in histone H2A deubiquitination and chromatin regulation. No established role in splicing. Clustering with spliceosome components suggests novel connection between chromatin state and splicing regulation, potentially coordinating epigenetic marks with splice site selection.	0.0920722931623458	0.4278256863869404
+FAM32A	uncharacterized	6.0	Limited characterization showing potential role in G2 arrest and apoptosis (1 publication). No known connection to splicing. Clustering suggests possible novel role in coordinating splicing with cell cycle regulation or stress response.	-0.2209696173667907	1.104577453960592
+LOC102724594	uncharacterized	9.0	Completely uncharacterized gene with no functional annotation. Clustering with core spliceosome components suggests potential role in splicing machinery or RNA processing. High discovery potential.	-0.3253349065780639	2.397940008672037
+ENSG00000289690	uncharacterized	9.0	Uncharacterized gene with no functional information. Strong clustering with established splicing factors indicates likely involvement in pre-mRNA splicing or related RNA processing. Excellent candidate for novel splicing factor discovery.	-0.2340583205223083	1.269217724333611

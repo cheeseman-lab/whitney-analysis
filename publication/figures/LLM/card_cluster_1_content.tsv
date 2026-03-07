@@ -1,0 +1,64 @@
+gene	gene_type	priority	description	effect_size	neg_log10_pval
+RPL30	established			0.2131399810314178	0.8130436645345878
+RPL35	established			0.1912697404623031	0.626720106722504
+RPL7	established			0.6109558343887329	2.017728766960432
+RPL10A	established			0.4553603529930115	2.853871964321762
+RPL7A	established			0.3973042368888855	1.3788237182249647
+RPL5	established			0.5434557199478149	2.318758762624413
+RPL37A	established			0.324498176574707	1.8860566476931635
+RPL10	established			0.635638415813446	2.2365720064370627
+RPL13A	established			0.394157350063324	1.9208187539523751
+RPL4	established			0.5252212882041931	2.397940008672037
+RPL38	established			0.4843292236328125	2.397940008672037
+RPL34	established			0.4570990800857544	2.6989700043360187
+RPL19	established			0.4816930294036865	
+RPL11	established			0.5258973836898804	3.6989700043360183
+RPL14	established			0.3616481125354767	1.8794260687941504
+RPL18A	established			0.2800444960594177	1.295849483160201
+RPL13	established			0.6225634217262268	
+RPL23A	established			0.4100880622863769	2.1804560644581312
+RPL31	established			0.1140808463096618	0.348721986001856
+RPL24	established			0.1861292421817779	0.6337638762817068
+RPL37	established			0.2402790784835815	1.0705810742857071
+RPL17	established			0.2997565269470215	1.2612194415156308
+RPL9	established			0.4337469339370727	2.1426675035687315
+RPLP2	established			0.0656377300620079	0.2181010806488509
+RPLP1	established			0.2166173160076141	0.9469215565165804
+UBA52	established			0.2819676995277405	1.258060922270801
+GTPBP4	established			0.385111927986145	2.657577319177794
+RSL1D1	established			0.17533840239048	0.8840568230609449
+RPF1	established			0.5247616767883301	3.2218487496163566
+EBNA1BP2	established			0.5711524486541748	
+MDN1	established			0.3426247239112854	2.167491087293764
+GNL2	established			0.3200269341468811	1.4788619162959638
+NCL	established			0.3350605070590973	1.9507819773298185
+NOP2	established			0.3738424479961395	3.397940008672037
+EXOSC7	established			0.1933503001928329	0.82623117686335
+RRP1	established			0.3772472739219665	2.494850021680094
+RSL24D1	established			0.5439196825027466	
+MRTO4	established			0.0560789108276367	0.1857524042680798
+RRS1	established			0.4079599678516388	3.096910013008056
+RPF2	established			0.6076580882072449	
+DDX56	established			0.4013161659240722	2.494850021680094
+DDX24	established			0.3398847579956054	2.0757207139381184
+DDX54	established			0.263646125793457	1.585026652029182
+ISG20L2	established			0.4074601531028747	3.397940008672037
+NLE1	established			0.3759511411190033	1.1830961606243398
+EIF4G1	established			0.3465939164161682	2.4436974992327127
+EIF3F	established			0.4121899008750915	2.657577319177794
+EIF3M	established			0.5810558795928955	3.397940008672037
+NIFK	novel	3.0	No functional annotation provided, but gene name (Nucleolar protein interacting with FHA domain of Ki-67) strongly suggests established nucleolar/ribosome function. Likely already characterized in literature.	0.5705400705337524	
+SPOUT1	novel	4.0	Recently characterized as 28S rRNA methyltransferase (2024 publication). Also has mitotic spindle functions. Role in ribosome biogenesis is now established, so priority is lower.	0.1432968974113464	0.3968556273798176
+BRSK2	novel	5.0	Serine/threonine kinase primarily studied in neuronal polarization and insulin secretion. Clustering with ribosome biogenesis factors suggests potential regulatory role, but connection is speculative.	0.0655328258872032	0.1832285876666535
+RELB	novel	6.0	Well-characterized NF-κB transcription factor involved in immunity and inflammation. Clustering suggests potential novel role in transcriptional regulation of ribosomal genes or nucleolar stress response.	0.1756147146224975	0.623423042943488
+DYRK1A	novel	6.0	Dual-specificity kinase with roles in transcription, splicing, and DNA repair. Phosphorylates RNA Pol II CTD. Novel connection to ribosome biogenesis pathway not well-established, though transcriptional role is plausible.	0.1657994836568832	0.7095201866693269
+CEBPZ	novel	7.0	Known as transcription factor stimulating HSP70 promoter. Clustering with ribosome biogenesis machinery suggests novel role in ribosomal gene transcription or rRNA processing not well-established in literature.	0.3313749432563782	2.657577319177794
+ACTR1A	novel	7.0	Established component of dynactin complex for microtubule-based transport. Clustering with nucleolar ribosome biogenesis factors suggests novel role in ribosomal subunit trafficking or nucleolar organization.	0.104218453168869	0.4561801948573423
+RPL7L1	uncharacterized	4.0	No functional annotation provided, but as RPL7-like protein likely has ribosomal function. Paralog relationship suggests partial characterization exists.	0.422265350818634	1.630784142589857
+RPL17-C18orf32	uncharacterized	5.0	Readthrough fusion transcript. Limited characterization but likely related to RPL17 function in ribosome structure.	0.5438359379768372	
+RPL36A-HNRNPH2	uncharacterized	5.0	Readthrough fusion transcript combining ribosomal protein and RNA-binding protein. Minimal functional characterization.	0.4188924431800842	3.0
+RRP15	uncharacterized	6.0	No functional information provided. Name suggests ribosomal RNA processing involvement, but lacks experimental characterization in human cells.	0.3767439424991607	2.397940008672037
+MAK16	uncharacterized	6.0	No functional annotation provided. Yeast ortholog functions in ribosome biogenesis, but human protein remains poorly characterized.	0.2846295833587646	1.790484985457369
+NOP16	uncharacterized	7.0	No functional information provided despite nucleolar protein nomenclature. Likely involved in ribosome biogenesis based on naming convention and cluster membership, but lacks experimental validation.	0.1984551548957824	0.964970717797632
+URB1	uncharacterized	7.0	No functional annotation provided. Clusters with ribosome biogenesis machinery. Yeast ortholog is involved in ribosome biogenesis, but human function remains uncharacterized.	0.396656334400177	2.337242168318426
+ENSG00000261582	uncharacterized	9.0	No functional annotation provided. Completely uncharacterized gene clustering with ribosome biogenesis factors. High priority for novel discovery in ribosomal pathway.	0.0274242460727691	0.081655071037725

@@ -1,0 +1,24 @@
+gene	gene_type	priority	description	effect_size	neg_log10_pval
+POLR2B	established			0.763653039932251	
+POLR2H	established			0.1152229830622673	0.2996424721773399
+POLR2C	established			0.4720839262008667	3.397940008672037
+POLR2J	established			0.4445425271987915	3.6989700043360183
+POLR2J2	established			0.3398163914680481	1.958607314841775
+POLR2J3	established			0.6100736260414124	
+POLR2F	established			0.4939371943473816	
+POLR2L	established			0.6054733395576477	
+POLR2K	established			0.4551295340061188	3.397940008672037
+POLR2E	established			0.4560904204845428	
+GTF2B	established			0.4354999661445617	3.6989700043360183
+PAF1	established			0.2962481081485748	2.096910013008056
+CTR9	established			0.1693137139081955	0.5159850373324371
+CDC73	established			0.4240877628326416	2.744727494896694
+SUPT5H	established			0.336244523525238	2.0555173278498318
+CTDP1	established			0.369533509016037	2.5228787452803374
+CNOT1	established			0.3329762518405914	2.853871964321762
+DDX3X	novel	5.0	Multifunctional RNA helicase with documented roles in transcription regulation (CDKN1A, CDH1, HNF4A-mediated transcription). However, its clustering specifically with Pol II elongation machinery suggests a more direct role in transcription elongation or RNA processing coupled to transcription than previously appreciated. Moderate priority as transcriptional functions are already partially established.	0.5059042572975159	
+SENP6	novel	5.0	SUMO protease with established roles in chromosome segregation and DNA repair. While SUMOylation regulates transcription factors, SENP6's clustering with Pol II machinery suggests potential direct regulation of transcription complex components through deSUMOylation. This would extend its known functions but is plausible given SUMO's role in transcription.	0.2283059209585189	0.8002448227465253
+UBE3A	novel	6.0	E3 ubiquitin ligase with established roles in protein degradation and quality control. While it has transcriptional coactivator activity with progesterone receptor, its clustering with core Pol II components suggests a broader, potentially novel role in regulating transcription machinery stability or activity through ubiquitination of Pol II subunits or associated factors.	0.5648788809776306	
+RHOC	novel	7.0	Small GTPase known for regulating cytoskeletal dynamics, focal adhesions, and cytokinesis. No documented role in transcription. Its presence in this cluster suggests potential involvement in spatial organization of transcription machinery or nuclear architecture during transcription, which would be a novel and unexpected function.	-0.0789230912923812	0.3565473235138127
+HMGCR	novel	7.0	Rate-limiting enzyme in cholesterol biosynthesis with well-established metabolic functions. No known direct role in transcription. Clustering with Pol II machinery suggests potential novel connection between cholesterol/isoprenoid metabolism and transcriptional regulation, possibly through membrane organization or post-translational modifications of transcription factors.	-0.0901773869991302	0.3362990746103518
+PLPP4	novel	8.0	Magnesium-independent phospholipid phosphatase with no established connection to transcription machinery. Its clustering with core Pol II components suggests a potential novel role in transcription regulation through lipid signaling or membrane organization at transcription sites. This would represent a surprising connection between lipid metabolism and transcriptional machinery.	0.2567378282546997	1.5086383061657274

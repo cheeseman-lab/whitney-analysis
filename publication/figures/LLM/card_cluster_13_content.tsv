@@ -1,0 +1,21 @@
+gene	gene_type	priority	description	effect_size	neg_log10_pval
+UTP18	established			0.2752940654754638	1.6382721639824072
+FCF1	established			0.3624700307846069	2.657577319177794
+DCAF13	established			0.4900835156440735	2.853871964321762
+FBL	established			0.4372309446334839	2.795880017344075
+WDR3	established			0.3242692947387695	2.026872146400301
+WDR36	established			0.2139101475477218	1.2175273758337135
+NOP56	established			0.3980000019073486	2.744727494896694
+UTP4	established			0.1549787521362304	0.8754957751657177
+UTP6	established			0.4016494452953338	2.619788758288394
+WDR46	established			0.4907668530941009	
+MPHOSPH10	established			0.543873131275177	
+KRR1	established			0.3081792593002319	2.5850266520291822
+UTP3	established			0.4097377955913543	
+RPS16	established			0.640619158744812	
+RPL27	established			0.3470681607723236	1.3169529617611504
+NEPRO	novel	4.0	Characterized primarily in Notch signaling and neural progenitor maintenance. Clustering with ribosome biogenesis genes is unexpected but may reflect indirect effects on cell proliferation or nucleolar structure. Lower priority as the connection to ribosome biogenesis is less mechanistically clear and may represent off-target or secondary effects.	0.392879456281662	2.283996656365201
+NUFIP1	novel	5.0	RNA-binding protein with limited functional characterization beyond RNA binding capacity. Clustering suggests involvement in ribosome biogenesis, potentially as an RNA chaperone in SSU processome assembly. However, relatively understudied with unclear specific function, making this a moderate priority for validation.	-0.195821538567543	1.0757207139381184
+DUSP11	novel	6.0	Known RNA 5'-triphosphatase/diphosphatase involved in nuclear mRNA metabolism. Clustering with ribosome biogenesis machinery suggests potential novel role in pre-rRNA processing or modification. RNA binding activity and nuclear localization are consistent with SSU processome function, but no direct literature linking it to ribosome biogenesis.	0.0467641055583953	0.1678744574659908
+SUPT4H1	novel	7.0	Well-characterized as component of DSIF complex regulating RNA Pol II transcription elongation and mRNA processing. However, clustering with SSU processome genes suggests potential novel role in ribosomal RNA transcription regulation or coordination between ribosome biogenesis and general transcription. UTP4 is noted to be required for optimal pre-rRNA transcription by RNA polymerase, suggesting a mechanistic link.	0.0735830068588256	0.320390428220244
+LOC102724159	uncharacterized	9.0	No functional annotation provided. Clustering with ribosome biogenesis genes suggests potential role in SSU processome or ribosomal RNA processing, but completely unstudied. High discovery potential for novel ribosome biogenesis factor.	0.3454866111278534	2.283996656365201

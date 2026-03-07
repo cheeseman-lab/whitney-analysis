@@ -1,0 +1,26 @@
+gene	gene_type	priority	description	effect_size	neg_log10_pval
+PSMA1	established			-0.2654571831226349	1.5436339668709584
+PSMA4	established			-0.3739456832408905	2.5850266520291987
+PSMA7	established			-0.224993884563446	1.0757207139381184
+PSMB1	established			-0.3350024819374084	2.2365720064370627
+PSMB3	established			-0.306171715259552	1.645891560852601
+PSMB4	established			-0.299394279718399	1.665546248849069
+PSMB7	established			-0.0936420410871505	0.3763372926437953
+PSMC1	established			-0.0469694808125495	0.1497214474819629
+PSMC2	established			-0.231474682688713	1.5436339668709584
+PSMC3	established			-0.1474663913249969	0.4601714416221018
+PSMC4	established			-0.4584937989711761	3.3979400086721463
+PSMC5	established			-0.2876795530319214	1.5316526695878427
+PSMC6	established			-0.2860965728759765	1.1487416512809254
+PSMD2	established			-0.2005114704370498	0.6352614449446015
+PSMD7	established			-0.133107453584671	0.4838614232829256
+NEDD8	established			-0.0390428341925144	0.1595175127865579
+NAE1	established			-0.1071419790387153	0.5391021572434522
+FNBP4	novel	5.0	No functional annotation provided. Gene name suggests formin-binding protein function (typically cytoskeletal), making co-clustering with proteasome components unexpected. However, without additional context, priority is moderate pending literature review.	-0.0211033746600151	0.0883098412461388
+FOXN3	novel	6.0	Transcriptional repressor involved in DNA damage-induced cell cycle checkpoints. May regulate expression of proteasome components or UPS pathway genes in response to cellular stress, though this connection is not established in literature.	0.0971421599388122	0.30715308072277
+SNRNP27	novel	7.0	Putative mRNA splicing factor with minimal characterization. Co-clustering with proteasome suggests potential novel link between splicing and protein degradation pathways, similar to SNRPE but with less established function overall.	-0.0820467546582222	0.4118403836169081
+SNRPE	novel	8.0	Well-characterized spliceosomal component with no established connection to proteasome function. Co-clustering is surprising and suggests potential novel crosstalk between splicing machinery and UPS. Could indicate proteasome-mediated regulation of splicing factors or splicing-dependent regulation of proteasome components.	-0.3390781581401825	1.4609239012072246
+AKIRIN2	novel	9.0	Recently discovered to bridge proteasomes and nuclear import receptor IPO9, mediating nuclear proteasome import. While this function is now established (2021 publication), its co-clustering with proteasome components validates this role and suggests it may have additional undiscovered functions in proteasome regulation or assembly that merit investigation.	-0.5031642913818359	2.2676062401770314
+NEDD8-MDP1	uncharacterized	7.0	Gene name suggests NEDD8-related function but lacks functional annotation in provided data. Given NEDD8's established role in neddylation and cullin regulation within UPS, this gene may represent an understudied component of the neddylation machinery.	-0.1060410887002945	0.4199878874705756
+ENSG00000256206	uncharacterized	9.0	Completely uncharacterized gene with no functional annotation. Clusters with core proteasome components, suggesting potential role in protein degradation or proteasome assembly/regulation. High discovery potential given complete lack of characterization.	-0.2797568142414093	1.645891560852601
+ENSG00000256646	uncharacterized	9.0	Completely uncharacterized gene with no functional annotation. Co-clustering with proteasome machinery suggests involvement in UPS pathway. Represents high-priority target for novel proteasome-associated factor discovery.	-0.6468837261199951	
