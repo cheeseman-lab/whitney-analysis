@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="459.035625pt" height="387.548187pt" viewBox="0 0 459.035625 387.548187" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-03-10T01:46:28.383768</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.3, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 387.548187 
+L 459.035625 387.548187 
+L 459.035625 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 43.895625 357.0485 
+L 451.835625 357.0485 
+L 451.835625 23.14 
+L 43.895625 23.14 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 88.014528 357.0485 
+L 88.014528 23.14 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_2"/>
+     <g id="text_1">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; fill: #262626" transform="translate(65.194997 367.6485)">Phenotype</text>
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; fill: #262626" transform="translate(78.270778 378.3685)">Cells</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 151.954967 357.0485 
+L 151.954967 23.14 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_4"/>
+     <g id="text_2">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; fill: #262626" transform="translate(144.315123 367.6485)">SBS</text>
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; fill: #262626" transform="translate(142.211217 378.148187)">Cells</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 215.895406 357.0485 
+L 215.895406 23.14 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_6"/>
+     <g id="text_3">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="215.895406" y="367.6485" transform="rotate(-0 215.895406 367.6485)">Matched</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 279.835844 357.0485 
+L 279.835844 23.14 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_8"/>
+     <g id="text_4">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="279.835844" y="367.6485" transform="rotate(-0 279.835844 367.6485)">Deduped</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_9">
+      <path d="M 343.776283 357.0485 
+L 343.776283 23.14 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_10"/>
+     <g id="text_5">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="343.776283" y="367.6485" transform="rotate(-0 343.776283 367.6485)">1+ Barcode</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_11">
+      <path d="M 407.716722 357.0485 
+L 407.716722 23.14 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_12"/>
+     <g id="text_6">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="407.716722" y="367.6485" transform="rotate(-0 407.716722 367.6485)">1 Gene</text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_13">
+      <path d="M 43.895625 357.0485 
+L 451.835625 357.0485 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_14"/>
+     <g id="text_7">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="360.5985" transform="rotate(-0 40.395625 360.5985)">0M</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_15">
+      <path d="M 43.895625 313.105504 
+L 451.835625 313.105504 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_16"/>
+     <g id="text_8">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="316.655504" transform="rotate(-0 40.395625 316.655504)">2M</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_17">
+      <path d="M 43.895625 269.162509 
+L 451.835625 269.162509 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_18"/>
+     <g id="text_9">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="272.712509" transform="rotate(-0 40.395625 272.712509)">5M</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_19">
+      <path d="M 43.895625 225.219513 
+L 451.835625 225.219513 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_20"/>
+     <g id="text_10">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="228.769513" transform="rotate(-0 40.395625 228.769513)">8M</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_21">
+      <path d="M 43.895625 181.276517 
+L 451.835625 181.276517 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_22"/>
+     <g id="text_11">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="184.826517" transform="rotate(-0 40.395625 184.826517)">10M</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_23">
+      <path d="M 43.895625 137.333521 
+L 451.835625 137.333521 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_24"/>
+     <g id="text_12">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="140.883521" transform="rotate(-0 40.395625 140.883521)">12M</text>
+     </g>
+    </g>
+    <g id="ytick_7">
+     <g id="line2d_25">
+      <path d="M 43.895625 93.390526 
+L 451.835625 93.390526 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_26"/>
+     <g id="text_13">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="96.940526" transform="rotate(-0 40.395625 96.940526)">15M</text>
+     </g>
+    </g>
+    <g id="ytick_8">
+     <g id="line2d_27">
+      <path d="M 43.895625 49.44753 
+L 451.835625 49.44753 
+" clip-path="url(#p6d43b9b1ee)" style="fill: none; stroke: #cccccc; stroke-width: 0.8; stroke-linecap: round"/>
+     </g>
+     <g id="line2d_28"/>
+     <g id="text_14">
+      <text style="font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: end; fill: #262626" x="40.395625" y="52.99753" transform="rotate(-0 40.395625 52.99753)">18M</text>
+     </g>
+    </g>
+    <g id="text_15">
+     <text style="font-size: 12px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="15.72" y="190.09425" transform="rotate(-90 15.72 190.09425)">Total Cells</text>
+    </g>
+   </g>
+   <g id="patch_3">
+    <path d="M 62.438352 357.0485 
+L 113.590703 357.0485 
+L 113.590703 82.006231 
+L 62.438352 82.006231 
+z
+" clip-path="url(#p6d43b9b1ee)" style="fill: #3498db; opacity: 0.85; stroke: #000000; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 126.378791 357.0485 
+L 177.531142 357.0485 
+L 177.531142 39.040405 
+L 126.378791 39.040405 
+z
+" clip-path="url(#p6d43b9b1ee)" style="fill: #2980b9; opacity: 0.85; stroke: #000000; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 190.31923 357.0485 
+L 241.471581 357.0485 
+L 241.471581 111.773621 
+L 190.31923 111.773621 
+z
+" clip-path="url(#p6d43b9b1ee)" style="fill: #8e44ad; opacity: 0.85; stroke: #000000; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 254.259669 357.0485 
+L 305.41202 357.0485 
+L 305.41202 144.12746 
+L 254.259669 144.12746 
+z
+" clip-path="url(#p6d43b9b1ee)" style="fill: #e74c3c; opacity: 0.85; stroke: #000000; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 318.200108 357.0485 
+L 369.352459 357.0485 
+L 369.352459 195.359421 
+L 318.200108 195.359421 
+z
+" clip-path="url(#p6d43b9b1ee)" style="fill: #e67e22; opacity: 0.85; stroke: #000000; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 382.140547 357.0485 
+L 433.292898 357.0485 
+L 433.292898 264.744199 
+L 382.140547 264.744199 
+z
+" clip-path="url(#p6d43b9b1ee)" style="fill: #f39c12; opacity: 0.85; stroke: #000000; stroke-width: 1.5; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 43.895625 357.0485 
+L 43.895625 23.14 
+" style="fill: none; stroke: #cccccc; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 43.895625 357.0485 
+L 451.835625 357.0485 
+" style="fill: none; stroke: #cccccc; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_16">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="88.014528" y="76.846463" transform="rotate(-0 88.014528 76.846463)">15.6M</text>
+   </g>
+   <g id="text_17">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="151.954967" y="33.880636" transform="rotate(-0 151.954967 33.880636)">18.1M</text>
+   </g>
+   <g id="text_18">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="215.895406" y="106.613852" transform="rotate(-0 215.895406 106.613852)">14.0M</text>
+   </g>
+   <g id="text_19">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="279.835844" y="138.967692" transform="rotate(-0 279.835844 138.967692)">12.1M</text>
+   </g>
+   <g id="text_20">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="343.776283" y="190.199653" transform="rotate(-0 343.776283 190.199653)">9.2M</text>
+   </g>
+   <g id="text_21">
+    <text style="font-weight: 700; font-size: 10px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="407.716722" y="259.58443" transform="rotate(-0 407.716722 259.58443)">5.3M</text>
+   </g>
+   <g id="text_22">
+    <text style="font-weight: 700; font-size: 14px; font-family: 'Myriad Pro', 'Arial', 'DejaVu Sans', 'Helvetica', sans-serif; text-anchor: middle; fill: #262626" x="247.865625" y="17.14" transform="rotate(-0 247.865625 17.14)">Cell Retention Through Pipeline (Total)</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p6d43b9b1ee">
+   <rect x="43.895625" y="23.14" width="407.94" height="333.9085"/>
+  </clipPath>
+ </defs>
+</svg>

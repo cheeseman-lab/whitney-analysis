@@ -2,13 +2,15 @@
 """
 Generate QC panels for Lander presentation.
 
-Creates 6 publication-quality QC panel figures:
+Creates 7 publication-quality QC panel figures:
 (a) Spatial heatmap of cell mapping to single gene
 (b) Cell count boxplot (1 Gene vs >1 Gene)
 (c) Mapping percentage bar plot
 (d) Barcode prefix matching per well
 (e) Q-scores across cycles per well
 (f) KDE of cells per perturbation
+(g) Cell retention funnel through deduplication pipeline
+(h) Total cell retention barplot (summed across all wells)
 
 Usage:
     python generate_qc_panels.py [--output-dir figures/] [--sample-reads 0.1]
@@ -158,8 +160,7 @@ def load_barcode_library():
         raise FileNotFoundError(f"Library file not found: {path}")
 
     df = pd.read_csv(path)
-    # Get unique barcodes from iBAR_1 and iBAR_2 columns
-    barcodes = set(df["iBAR_1"].dropna().unique()) | set(df["iBAR_2"].dropna().unique())
+    barcodes = set(df["iBAR_2"].dropna().unique())
     return barcodes
 
 
@@ -197,6 +198,94 @@ def load_reads_data(sample_frac=0.1):
         raise FileNotFoundError("No reads parquet files found")
 
     return pd.concat(all_data, ignore_index=True)
+
+
+def load_retention_funnel_data():
+    """
+    Load cell counts at each pipeline stage for the retention funnel.
+
+    Stages: Phenotype Cells, SBS Cells, Matched, After SBS Dedup,
+    After Phenotype Dedup, 1+ Barcode, 1 Gene.
+
+    Returns DataFrame with columns: plate, well, stage, count.
+    """
+    rows = []
+
+    for plate in PLATES:
+        # Phenotype segmentation overview → final_cells per well
+        ph_path = (
+            BRIEFLOW_OUTPUT
+            / "phenotype"
+            / "eval"
+            / "segmentation"
+            / f"{plate}__segmentation_overview.tsv"
+        )
+        ph_overview = pd.read_csv(ph_path, sep="\t")
+
+        # SBS segmentation overview → final_cells per well
+        sbs_path = (
+            BRIEFLOW_OUTPUT
+            / "sbs"
+            / "eval"
+            / "segmentation"
+            / f"{plate}__segmentation_overview.tsv"
+        )
+        sbs_overview = pd.read_csv(sbs_path, sep="\t")
+
+        for well in WELLS:
+            ph_row = ph_overview[ph_overview["well"] == well].iloc[0]
+            sbs_row = sbs_overview[sbs_overview["well"] == well].iloc[0]
+
+            # Stage 1 & 2: initial segmented cells
+            rows.append(
+                {"plate": plate, "well": well, "stage": "Phenotype\nCells",
+                 "count": ph_row["final_cells"]}
+            )
+            rows.append(
+                {"plate": plate, "well": well, "stage": "SBS\nCells",
+                 "count": sbs_row["final_cells"]}
+            )
+
+            # Stage 3-5: from deduplication stats
+            dedup_path = (
+                BRIEFLOW_OUTPUT
+                / "merge"
+                / "eval"
+                / f"{plate}_W-{well}__deduplication_stats.tsv"
+            )
+            dedup = pd.read_csv(dedup_path, sep="\t")
+            stage_map = {
+                "Initial": "Matched",
+                "After phenotype dedup": "Deduped",
+            }
+            for _, d_row in dedup.iterrows():
+                label = stage_map.get(d_row["stage"])
+                if label:
+                    rows.append(
+                        {"plate": plate, "well": well, "stage": label,
+                         "count": d_row["total_cells"]}
+                    )
+
+            # Stage 6 & 7: barcode/gene counts from merge_final parquet
+            merge_path = (
+                BRIEFLOW_OUTPUT
+                / "merge"
+                / "parquets"
+                / f"{plate}_W-{well}__merge_final.parquet"
+            )
+            merge_df = pd.read_parquet(
+                merge_path, columns=["cell_barcode_0", "mapped_single_gene"]
+            )
+            rows.append(
+                {"plate": plate, "well": well, "stage": "1+ Barcode",
+                 "count": merge_df["cell_barcode_0"].notna().sum()}
+            )
+            rows.append(
+                {"plate": plate, "well": well, "stage": "1 Gene",
+                 "count": merge_df["mapped_single_gene"].sum()}
+            )
+
+    return pd.DataFrame(rows)
 
 
 def load_perturbation_counts():
@@ -693,13 +782,87 @@ def compute_prefix_matching(reads_df, library_barcodes):
                 }
             )
 
-    return pd.DataFrame(results)
+    df = pd.DataFrame(results)
+    return df, prefix_sets
 
 
-def plot_panel_d_prefix_matching(prefix_data, output_path):
+def plot_panel_d_prefix_matching(prefix_data, prefix_sets, output_path):
     """
     Panel D: Barcode prefix matching plot per well.
     """
+    prefix_set_sizes = {length: len(ps) for length, ps in prefix_sets.items()}
+    fig, ax = plt.subplots(figsize=FIGURE_SIZE)
+
+    # Per-well lines (thin, colored by plate)
+    for (plate, well), group in prefix_data.groupby(["plate", "well"]):
+        color = PALETTE_DE[plate]
+        ax.plot(
+            group["prefix_length"],
+            group["fraction_matching"],
+            linewidth=1,
+            alpha=0.5,
+            color=color,
+        )
+
+    # Per-plate averages
+    for plate in PLATES:
+        plate_data = prefix_data[prefix_data["plate"] == plate]
+        avg = plate_data.groupby("prefix_length")["fraction_matching"].mean()
+        ax.plot(
+            avg.index,
+            avg.values,
+            linewidth=2.5,
+            color=PALETTE_DE[plate],
+            marker="o",
+            markersize=5,
+            label=f"{plate.replace('P-', 'Plate ')}",
+        )
+
+    # Overall average (thick black line)
+    overall = prefix_data.groupby("prefix_length")["fraction_matching"].mean()
+    ax.plot(
+        overall.index,
+        overall.values,
+        linewidth=3.5,
+        color="black",
+        marker="o",
+        markersize=6,
+        label="All Wells Avg",
+    )
+
+    # Random expectation line: fraction of possible prefixes covered by library
+    lengths = range(1, 13)
+    random_exp = [prefix_set_sizes.get(n, 1) / (4**n) for n in lengths]
+    ax.plot(
+        lengths,
+        random_exp,
+        linewidth=2,
+        color="gray",
+        linestyle="--",
+        marker=".",
+        markersize=4,
+        alpha=0.7,
+        label="Random Expected",
+    )
+
+    ax.set_xlabel("Barcode Prefix Length (bases)")
+    ax.set_ylabel("Fraction of Reads Matching Library")
+    ax.set_title("Barcode Prefix Matching", fontweight="bold")
+    ax.set_xlim(1, 12)
+    ax.set_ylim(0, 1.05)
+    ax.set_xticks(range(1, 13))
+    ax.legend(loc="upper right", fontsize=9)
+
+    plt.tight_layout()
+    save_figure(fig, output_path)
+    plt.close()
+
+
+def plot_panel_d_zoomed(prefix_data, prefix_sets, output_path):
+    """
+    Panel D (zoomed): Same as default but zoomed into cycles 7-12.
+    """
+    prefix_set_sizes = {length: len(ps) for length, ps in prefix_sets.items()}
     fig, ax = plt.subplots(figsize=FIGURE_SIZE)
 
     # Per-well lines (thin, colored by plate)
@@ -741,7 +904,7 @@ def plot_panel_d_prefix_matching(prefix_data, output_path):
 
     # Random expectation line
     lengths = range(1, 13)
-    random_exp = [(1 / 4) ** n for n in lengths]
+    random_exp = [prefix_set_sizes.get(n, 1) / (4**n) for n in lengths]
     ax.plot(
         lengths,
         random_exp,
@@ -751,16 +914,21 @@ def plot_panel_d_prefix_matching(prefix_data, output_path):
         marker=".",
         markersize=4,
         alpha=0.7,
-        label="Random (1/4)^n",
+        label="Random Expected",
     )
 
     ax.set_xlabel("Barcode Prefix Length (bases)")
     ax.set_ylabel("Fraction of Reads Matching Library")
-    ax.set_title("Barcode Prefix Matching", fontweight="bold")
-    ax.set_xlim(1, 12)
-    ax.set_ylim(0, 1.05)
-    ax.set_xticks(range(1, 13))
+    ax.set_title("Barcode Prefix Matching (Zoomed)", fontweight="bold")
+    ax.set_xlim(7, 12)
+    ax.set_xticks(range(7, 13))
     ax.legend(loc="upper right", fontsize=9)
+
+    # Auto y-axis to zoom into the separation region
+    zoomed = prefix_data[prefix_data["prefix_length"] >= 7]
+    y_min = max(0, zoomed["fraction_matching"].min() - 0.05)
+    y_max = min(1.05, zoomed["fraction_matching"].max() + 0.05)
+    ax.set_ylim(y_min, y_max)
 
     plt.tight_layout()
     save_figure(fig, output_path)
@@ -931,6 +1099,161 @@ def plot_panel_f_histogram(data, essential_genes, output_path):
 
 
 # =============================================================================
+# Panel G: Cell Retention Funnel
+# =============================================================================
+
+
+def plot_panel_g_retention_funnel(data, output_path):
+    """
+    Panel G: Cell retention through the full pipeline.
+    Boxplot with individual well points (matching Panel B style).
+    Stages: Phenotype, SBS, Matched, After SBS Dedup, After Phenotype Dedup,
+    1+ Barcode, 1 Gene.
+    """
+    from matplotlib.lines import Line2D
+
+    stage_order = [
+        "Phenotype\nCells", "SBS\nCells", "Matched",
+        "Deduped", "1+ Barcode", "1 Gene",
+    ]
+    stage_colors = [
+        "#3498db", "#2980b9", "#8e44ad",
+        "#e74c3c", "#e67e22", "#f39c12",
+    ]
+    color_map = dict(zip(stage_order, stage_colors))
+    markers = {"Plate 1": "o", "Plate 2": "s"}
+
+    # Prepare plot data
+    data = data.copy()
+    data["Plate"] = data["plate"].str.replace("P-", "Plate ")
+
+    fig, ax = plt.subplots(figsize=FIGURE_SIZE)
+
+    # Boxplot
+    sns.boxplot(
+        data=data,
+        x="stage",
+        y="count",
+        hue="stage",
+        ax=ax,
+        palette=color_map,
+        width=0.6,
+        order=stage_order,
+        legend=False,
+        zorder=1,
+        showfliers=False,
+    )
+
+    # Individual well points
+    stage_positions = {s: i for i, s in enumerate(stage_order)}
+    for plate, marker in markers.items():
+        plate_data = data[data["Plate"] == plate]
+        for stage in stage_order:
+            subset = plate_data[plate_data["stage"] == stage]
+            x_pos = stage_positions[stage] + np.random.uniform(
+                -0.15, 0.15, len(subset)
+            )
+            ax.scatter(
+                x_pos,
+                subset["count"],
+                marker=marker,
+                s=70,
+                facecolors=color_map[stage],
+                edgecolors="black",
+                linewidth=1.2,
+                alpha=1.0,
+                zorder=10,
+            )
+
+    # Format y-axis in millions
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f"{x / 1e6:.1f}M"))
+
+    ax.set_ylabel("Number of Cells")
+    ax.set_xlabel("")
+    ax.set_title("Cell Retention Through Pipeline (Per Well)", fontweight="bold")
+
+    # Plate shape legend (matching Panel B)
+    legend_elements = [
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="w",
+            markerfacecolor="black",
+            markeredgecolor="black",
+            markersize=8,
+            label="Plate 1",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="s",
+            color="w",
+            markerfacecolor="black",
+            markeredgecolor="black",
+            markersize=8,
+            label="Plate 2",
+        ),
+    ]
+    ax.legend(handles=legend_elements, loc="upper right")
+
+    plt.tight_layout()
+    save_figure(fig, output_path)
+    plt.close()
+
+
+def plot_panel_h_retention_totals(data, output_path):
+    """
+    Panel H: Total cell retention barplot (summed across all wells).
+    Same stages as Panel G but showing grand totals.
+    """
+    stage_order = [
+        "Phenotype\nCells", "SBS\nCells", "Matched",
+        "Deduped", "1+ Barcode", "1 Gene",
+    ]
+    stage_colors = [
+        "#3498db", "#2980b9", "#8e44ad",
+        "#e74c3c", "#e67e22", "#f39c12",
+    ]
+
+    # Sum across all wells per stage
+    totals = data.groupby("stage")["count"].sum()
+    totals = totals.reindex(stage_order)
+
+    fig, ax = plt.subplots(figsize=FIGURE_SIZE)
+
+    bars = ax.bar(
+        stage_order,
+        totals.values,
+        color=stage_colors,
+        edgecolor="black",
+        linewidth=1.5,
+        alpha=0.85,
+    )
+
+    # Value labels on bars (matching Panel C style)
+    for bar, val in zip(bars, totals.values):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + totals.max() * 0.01,
+            f"{val / 1e6:.1f}M",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            fontweight="bold",
+        )
+
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f"{x / 1e6:.0f}M"))
+    ax.set_ylabel("Total Cells")
+    ax.set_xlabel("")
+    ax.set_title("Cell Retention Through Pipeline (Total)", fontweight="bold")
+
+    plt.tight_layout()
+    save_figure(fig, output_path)
+    plt.close()
+
+
+# =============================================================================
 # Main
 # =============================================================================
 
@@ -1006,11 +1329,17 @@ def main():
     print("Panel C: Mapping percentage bar plot...")
     plot_panel_c_barplot(mapping_overview, output_dir / "qc_panel_c_barplot.png")
 
-    # Panel D: Barcode prefix matching
+    # Panel D: Barcode prefix matching (3 variants)
     print("Panel D: Computing barcode prefix matching...")
-    prefix_data = compute_prefix_matching(reads_data, library_barcodes)
+    prefix_data, prefix_sets = compute_prefix_matching(reads_data, library_barcodes)
     plot_panel_d_prefix_matching(
-        prefix_data, output_dir / "qc_panel_d_prefix_matching.png"
+        prefix_data, prefix_sets, output_dir / "qc_panel_d_prefix_matching.png"
+    )
+
+    # D zoomed
+    print("Panel D (zoomed): Zoomed prefix matching...")
+    plot_panel_d_zoomed(
+        prefix_data, prefix_sets, output_dir / "qc_panel_d_zoomed.png"
     )
 
     # Panel E: Q-scores
@@ -1021,6 +1350,19 @@ def main():
     print("Panel F: Cells per perturbation histogram...")
     plot_panel_f_histogram(
         perturbation_data, essential_genes, output_dir / "qc_panel_f_kde.png"
+    )
+
+    # Panel G: Cell retention funnel (per well)
+    print("Panel G: Cell retention funnel...")
+    retention_data = load_retention_funnel_data()
+    plot_panel_g_retention_funnel(
+        retention_data, output_dir / "qc_panel_g_retention_funnel.png"
+    )
+
+    # Panel H: Cell retention totals (summed)
+    print("Panel H: Cell retention totals...")
+    plot_panel_h_retention_totals(
+        retention_data, output_dir / "qc_panel_h_retention_totals.png"
     )
 
     print("\n" + "=" * 60)

@@ -155,22 +155,33 @@ def get_phenotype_stats(output_dir: Path) -> dict:
 
         parquet_schema = pq.read_schema(sample_parquet_files[0])
         all_columns = parquet_schema.names
-        # Count non-metadata columns (rough estimate)
-        metadata_prefixes = [
+        # Count non-metadata columns
+        metadata_columns = {
+            "label",
             "plate",
             "well",
             "tile",
-            "cell",
-            "i",
-            "j",
-            "x",
-            "y",
-            "label",
-        ]
+            "nucleus_i",
+            "nucleus_j",
+            "nucleus_bounds_0",
+            "nucleus_bounds_1",
+            "nucleus_bounds_2",
+            "nucleus_bounds_3",
+            "cell_i",
+            "cell_j",
+            "cell_bounds_0",
+            "cell_bounds_1",
+            "cell_bounds_2",
+            "cell_bounds_3",
+            "cytoplasm_i",
+            "cytoplasm_j",
+            "cytoplasm_bounds_0",
+            "cytoplasm_bounds_1",
+            "cytoplasm_bounds_2",
+            "cytoplasm_bounds_3",
+        }
         feature_cols = [
-            c
-            for c in all_columns
-            if not any(c.lower().startswith(p) for p in metadata_prefixes)
+            c for c in all_columns if c not in metadata_columns
         ]
         feature_count = len(feature_cols)
 
