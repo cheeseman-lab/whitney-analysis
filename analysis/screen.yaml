@@ -1,60 +1,169 @@
 # Screen Information
 experiment:
-  id: ""  # Experiment identifier
-  notebook_entries: ""  # Links or references to lab notebook entries
-  dates: 
-    start: ""
-    end: ""
+  id: "whitney"
+  type: "Fixed-cell optical pooled CRISPR-KO screen (genome-wide)"
+  reference: "Kirby, Di Bernardo et al. 2026"
+  doi: ""
 
-# Cellular Conditions
+# Cell Line
 cellular:
-  cell_line: ""  # e.g., HeLa, HEK293, etc.
-  imaging_timepoint: ""  # When imaging occurred after treatment
-  treatment:
-    summary: ""  # Brief description of treatment
-    details: ""  # Detailed protocol or conditions
-  plates: ""  # Number of plates
-  wells_per_plate: ""  # Number of wells per plate
+  cell_line: "HeLa-TetR-Cas9 (A7)"
+  species: "Human"
+  culture_media: "DMEM GlutaMAX (Gibco 10569010), 10% heat-inactivated FBS (MilliporeSigma F4135), 100 U/mL Pen, 100 ug/mL Strep (Gibco 15140122)"
+  cas9_induction:
+    inducer: "Doxycycline"
+    concentration: "2 ug/mL"
+    duration: "80 hours"
+  puromycin_selection:
+    concentration: "2 ug/mL"
+    duration: "4 days"
+  seeding:
+    density: "275,000 cells/well"
+    time_before_fixation: "56 hours"
+  plates: 2
+  plate_type: "6-well glass-bottom (Cellvis P06-1.5H-N)"
+  wells_per_plate: 6
+
+# CRISPR Library
+library:
+  vector: "CROPseq-puro-v2"
+  total_guides: 41906  # dual-guide constructs
+  guides_per_gene: 4  # 4 unique CRISPick-selected guides across 2 dual-guide constructs
+  nontargeting_controls: 200
+  barcode_length: 12  # 12 sequencing cycles, iBAR pair with Levenshtein distance 3
+  min_levenshtein_distance_between_guides: 3
+  number_of_genes: 20553
+  gene_selection:
+    description: "Union of GENCODE, RefSeq, and CHESS annotations including 412 olfactory receptors"
+  cloning: ""
+  oligo_synthesis: ""
+  nontargeting_fraction: ""
 
 # Sequencing by Synthesis (SBS)
 sbs:
-  cycles: ""  # Number of cycles
-  cycle_order: ""  # Order of cycles
-  background_channel: ""  # Suggested background channel
-  library_details:
-    number_of_genes: ""
-    guides_per_gene: ""
-    other_information: ""
+  cycles: 12
+  sequencing_kit: "Illumina MiSeq Nano v2 (MS-103-1003)"
+  sequencing_primer: "1 uM in 2X SSC, 30 min at RT"
+  incorporation: "7.5 min at 45C (Nano kit reagent 1, diluted 2:1 in 1X ThermoPol buffer)"
+  cleavage: "7.5 min at 45C (Nano kit cleavage mix)"
+  wash_buffer: "PR2 (Nano kit)"
+  wash_protocol: "Multiple exchanges and washes per reagent step at 45C, final washes at RT"
+  imaging_buffer: "2X SSC with 1:2000 Hoechst"
+  objective: "4X, NA 0.13, tube lens 180 mm"
+  sensor_pixel_size_um: 3.76
+  binning: "1x1"
+  channels:
+    - name: "DAPI"
+      laser: "405 nm, 35% intensity"
+      emission_filter: "multiband (Semrock FF01-441/511/593/684/817), filter position 1"
+      exposure: "50 ms"
+      analog_gain: 10.0
+    - name: "MiSeq G"
+      laser: "561 nm, 100% intensity"
+      emission_filter: "FF01-578/21, filter position 2"
+      exposure: "300 ms"
+      analog_gain: 10.0
+    - name: "MiSeq T"
+      laser: "561 nm, 100% intensity"
+      emission_filter: "FF01-624/40, filter position 3"
+      exposure: "300 ms"
+      analog_gain: 10.0
+    - name: "MiSeq A"
+      laser: "638 nm, 90% intensity"
+      emission_filter: "FF01-680/42, filter position 4"
+      exposure: "100 ms"
+      analog_gain: 10.0
+    - name: "MiSeq C"
+      laser: "638 nm, 90% intensity"
+      emission_filter: "FF01-732/68, filter position 5"
+      exposure: "100 ms"
+      analog_gain: 10.0
 
-# Phenotype (PH) Steps
+# Phenotype (PH) Imaging
 phenotype:
-  background_channel_cell: ""  # For cell segmentation
-  background_channel_body: ""  # For body (e.g. parasite) segmentation
-  
-  # Rounds of staining/imaging (in order they were stained for each round)
-  # Add more rounds as needed
-  rounds:
-    - round_number: 1
-      stains:
-        - name: "DAPI"  # Name of stain/antibody
-          marker_of: "Nuclei"  # What it marks
-          channel: "DAPI"  # Channel used (e.g., DAPI, CY3)
-        - name: "ConA"
-          marker_of: "Cytoplasm"
-          channel: "AF750"
-    
-    - round_number: 2
-      stains:
-        - name: ""  # Name of stain/antibody
-          marker_of: ""  # What it marks
-          channel: ""  # Channel used (e.g., DAPI, CY3)
-        - name: ""
-          marker_of: ""
-          channel: ""
+  objective: "20X, NA 0.8, tube lens 180 mm"
+  sensor_pixel_size_um: 7.52  # 2x2 binning of 3.76 um
+  binning: "2x2"
+  z_slices: 1  # no z-stacking
+  z_interval: ""
+  background_channel_cell: "Hoechst"
+  background_channel_body: "AGP"
 
-# Data Generated
+  channels:
+    - name: "Hoechst"
+      marker_of: "Nuclei (DNA)"
+      laser: "405 nm, 36% intensity"
+      emission_filter: "multiband (Semrock FF01-441/511/593/684/817), filter position 1"
+      exposure: "50 ms"
+      analog_gain: 10.0
+      reagent: "Hoechst (TFS 62249, 1:5000)"
+    - name: "COX4"
+      marker_of: "Mitochondria"
+      laser: "488 nm, 54% intensity"
+      emission_filter: "filter position 6"
+      exposure: "50 ms"
+      analog_gain: 10.0
+      reagent: "COX4 (ProteinTech CL488-11242, 1:250)"
+    - name: "AGP (Phalloidin)"
+      marker_of: "Actin / Golgi / Plasma membrane"
+      laser: "561 nm, 74% intensity"
+      emission_filter: "multiband (Semrock FF01-441/511/593/684/817), filter position 1"
+      exposure: "60 ms"
+      analog_gain: 10.0
+      reagent: "Phalloidin (TFS A34055, 1:1000)"
+    - name: "Concanavalin A"
+      marker_of: "Endoplasmic reticulum"
+      laser: "638 nm, 33% intensity"
+      emission_filter: "multiband (Semrock FF01-441/511/593/684/817), filter position 1"
+      exposure: "25 ms"
+      analog_gain: 10.0
+      reagent: "Concanavalin A (TFS C21421, 1:500)"
+
+# Fixation and In Situ Protocol
+protocol:
+  fixation: "4% formaldehyde (EMS 15714) in 1X PBS (Ambion AM9625), 30 min RT"
+  permeabilization: "70% ethanol, 30 min"
+  wash_buffer: "PBS-T (PBS + 0.05% Tween-20, VWR 100216-360)"
+  reverse_transcription:
+    buffer: "1x RevertAid RT buffer (TFS EP0452)"
+    dntps: "250 uM"
+    bsa: "0.2 mg/mL recombinant albumin (NEB B9200S)"
+    rt_primer: "1 uM biotinylated RT primer (IDT)"
+    rnase_inhibitor: "0.8 U/uL RiboLock (TFS EO0384)"
+    enzyme: "4.8 U/uL RevertAid H minus RT (TFS EP0452)"
+    incubation: "12 hours at 37C"
+  post_fixation: "3% formaldehyde + 0.1% glutaraldehyde, 30 min RT"
+  padlock_ligation:
+    buffer: "1x Ampligase buffer (Lucigen A3210K)"
+    rnase_h: "0.4 U/uL (Enzymatics Y9220L)"
+    padlock_probe: "0.1 uM each (IDT)"
+    taqit: "0.02 U/uL (Enzymatics P7620L)"
+    ampligase: "0.5 U/uL (Lucigen A3210K)"
+    dntps: "50 nM"
+    incubation: "5 min at 37C, 90 min at 45C"
+  rolling_circle_amplification:
+    buffer: "1x Phi29 buffer (TFS EP0091)"
+    dntps: "250 uM"
+    bsa: "0.2 mg/mL"
+    glycerol: "5%"
+    enzyme: "1 U/uL Phi29 DNA polymerase (TFS EP0091)"
+    incubation: "12 hours at 30C"
+
+# Microscope Hardware
+microscope:
+  system: "Cephla Squid+"
+  features: "Motorized filter wheel, 850 nm laser autofocus"
+  camera: "Sony IMX571 (3.76 um pixel size, 4168 x 4168 square FOV)"
+  control_software: "Squid source software (custom Otto2 integration)"
+  light_engine: "5-line laser engine (405, 470, 550, 640, 730 nm)"
+
+# Data
 data:
-  storage_format: ""  # e.g., .nd2, .tiff
-  location: "/lab/.."  # Base path for data storage
-  
-  notes: ""  # Any additional notes about the data or file naming conventions
+  storage_format: ""
+  location: ""
+
+# Data Provenance
+provenance:
+  processing_pipeline: "Brieflow"
+  pipeline_version: "v1.4.6"
+  dataset_version: "1.0"

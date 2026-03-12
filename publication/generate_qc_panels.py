@@ -2,7 +2,7 @@
 """
 Generate QC panels for Lander presentation.
 
-Creates 7 publication-quality QC panel figures:
+Creates 10 publication-quality QC panel figures:
 (a) Spatial heatmap of cell mapping to single gene
 (b) Cell count boxplot (1 Gene vs >1 Gene)
 (c) Mapping percentage bar plot
@@ -11,6 +11,8 @@ Creates 7 publication-quality QC panel figures:
 (f) KDE of cells per perturbation
 (g) Cell retention funnel through deduplication pipeline
 (h) Total cell retention barplot (summed across all wells)
+(i) Error-corrected prefix matching (raw vs corrected)
+(j) Mapping rate and cell retention vs read quality (Q_min)
 
 Usage:
     python generate_qc_panels.py [--output-dir figures/] [--sample-reads 0.1]
@@ -1254,6 +1256,344 @@ def plot_panel_h_retention_totals(data, output_path):
 
 
 # =============================================================================
+# Panel I: Error-Corrected Prefix Matching
+# =============================================================================
+
+
+def error_correct_barcodes(barcodes_series, library_set, max_dist=2):
+    """
+    Error-correct barcodes using the same logic as the brieflow pipeline.
+
+    Mirrors brieflow's error_correct_reads (sbs/call_cells.py): for each barcode,
+    finds the unique closest library match within Hamming distance max_dist.
+    Uses neighbor generation + set lookup for speed (equivalent to the pipeline's
+    brute-force distance matrix but tractable for large read sets).
+
+    Returns Series of corrected barcodes (uncorrected if no unique match).
+    """
+    bases = "ACGT"
+
+    # Work on unique barcodes for speed
+    unique_bcs = list(barcodes_series.dropna().astype(str).unique())
+    correction_map = {}
+
+    for bc in unique_bcs:
+        if bc in library_set:
+            correction_map[bc] = bc
+            continue
+
+        # Distance 1 neighbors
+        matches = set()
+        for i in range(len(bc)):
+            for b in bases:
+                if b != bc[i]:
+                    variant = bc[:i] + b + bc[i + 1 :]
+                    if variant in library_set:
+                        matches.add(variant)
+        if len(matches) == 1:
+            correction_map[bc] = matches.pop()
+            continue
+        elif len(matches) > 1:
+            correction_map[bc] = bc  # ambiguous
+            continue
+
+        if max_dist < 2:
+            correction_map[bc] = bc
+            continue
+
+        # Distance 2 neighbors
+        for i in range(len(bc)):
+            for j in range(i + 1, len(bc)):
+                for bi in bases:
+                    for bj in bases:
+                        if bi != bc[i] or bj != bc[j]:
+                            variant = bc[:i] + bi + bc[i + 1 : j] + bj + bc[j + 1 :]
+                            if variant in library_set:
+                                matches.add(variant)
+        if len(matches) == 1:
+            correction_map[bc] = matches.pop()
+        else:
+            correction_map[bc] = bc  # ambiguous or no match
+
+    return barcodes_series.map(correction_map)
+
+
+def compute_corrected_prefix_matching(reads_df, library_barcodes):
+    """
+    Compute prefix matching on error-corrected barcodes.
+
+    Returns DataFrame with prefix matching rates per well, with a 'corrected'
+    column indicating whether the data is raw or corrected.
+    """
+    # Build prefix sets
+    prefix_sets = {}
+    for length in range(1, 13):
+        prefix_sets[length] = set(
+            bc[:length] for bc in library_barcodes if len(bc) >= length
+        )
+
+    print("  Error-correcting barcodes (this may take a minute)...")
+    corrected_barcodes = error_correct_barcodes(
+        reads_df["barcode"].dropna().astype(str), library_barcodes
+    )
+
+    results = []
+    for (plate, well), group in reads_df.groupby(["plate", "well"]):
+        raw_barcodes = group["barcode"].dropna().astype(str)
+        corr_barcodes = corrected_barcodes.loc[raw_barcodes.index]
+        total = len(raw_barcodes)
+        if total == 0:
+            continue
+
+        for length in range(1, 13):
+            ps = prefix_sets[length]
+            # Raw
+            raw_frac = raw_barcodes.str[:length].isin(ps).sum() / total
+            results.append(
+                {
+                    "plate": plate,
+                    "well": well,
+                    "prefix_length": length,
+                    "fraction_matching": raw_frac,
+                    "corrected": False,
+                }
+            )
+            # Corrected
+            corr_frac = corr_barcodes.str[:length].isin(ps).sum() / total
+            results.append(
+                {
+                    "plate": plate,
+                    "well": well,
+                    "prefix_length": length,
+                    "fraction_matching": corr_frac,
+                    "corrected": True,
+                }
+            )
+
+    return pd.DataFrame(results), prefix_sets
+
+
+def plot_panel_i_corrected_prefix(data, prefix_sets, output_path):
+    """
+    Panel I: Prefix matching comparing raw vs error-corrected barcodes.
+    Style matches Panel D.
+    """
+    prefix_set_sizes = {length: len(ps) for length, ps in prefix_sets.items()}
+    fig, ax = plt.subplots(figsize=FIGURE_SIZE)
+
+    # Per-well thin lines (both raw and corrected)
+    for (plate, well, corrected), group in data.groupby(
+        ["plate", "well", "corrected"]
+    ):
+        color = PALETTE_DE[plate]
+        alpha = 0.3 if not corrected else 0.15
+        linestyle = "-" if not corrected else "--"
+        ax.plot(
+            group["prefix_length"],
+            group["fraction_matching"],
+            linewidth=0.8,
+            alpha=alpha,
+            color=color,
+            linestyle=linestyle,
+        )
+
+    # Overall averages: raw vs corrected
+    raw_data = data[~data["corrected"]]
+    corr_data = data[data["corrected"]]
+
+    raw_avg = raw_data.groupby("prefix_length")["fraction_matching"].mean()
+    corr_avg = corr_data.groupby("prefix_length")["fraction_matching"].mean()
+
+    ax.plot(
+        raw_avg.index,
+        raw_avg.values,
+        linewidth=3.5,
+        color="black",
+        marker="o",
+        markersize=6,
+        label="Raw (All Wells Avg)",
+    )
+    ax.plot(
+        corr_avg.index,
+        corr_avg.values,
+        linewidth=3.5,
+        color="black",
+        marker="s",
+        markersize=6,
+        linestyle="--",
+        label="Error-Corrected (All Wells Avg)",
+    )
+
+    # Random expectation
+    lengths = range(1, 13)
+    random_exp = [prefix_set_sizes.get(n, 1) / (4**n) for n in lengths]
+    ax.plot(
+        lengths,
+        random_exp,
+        linewidth=2,
+        color="gray",
+        linestyle=":",
+        marker=".",
+        markersize=4,
+        alpha=0.7,
+        label="Random Expected",
+    )
+
+    ax.set_xlabel("Barcode Prefix Length (bases)")
+    ax.set_ylabel("Fraction of Reads Matching Library")
+    ax.set_title("Prefix Matching: Raw vs Error-Corrected", fontweight="bold")
+    ax.set_xlim(1, 12)
+    ax.set_ylim(0, 1.05)
+    ax.set_xticks(range(1, 13))
+    ax.legend(loc="upper right", fontsize=9)
+
+    plt.tight_layout()
+    save_figure(fig, output_path)
+    plt.close()
+
+
+# =============================================================================
+# Panel J: Mapping Rate & Retention vs Read Quality
+# =============================================================================
+
+
+def compute_mapping_vs_quality(reads_df, library_barcodes):
+    """
+    Compute mapping rate and cell retention as a function of Q_min threshold.
+
+    Returns DataFrame with columns: plate, well, q_threshold,
+    mapping_rate, retention_fraction.
+    """
+    thresholds = np.arange(0, 0.31, 0.01)
+    library_set = set(library_barcodes)
+
+    results = []
+    for (plate, well), group in reads_df.groupby(["plate", "well"]):
+        barcodes = group["barcode"].dropna().astype(str)
+        q_min = group.loc[barcodes.index, "Q_min"]
+        total = len(barcodes)
+        if total == 0:
+            continue
+
+        for thresh in thresholds:
+            mask = q_min >= thresh
+            n_passing = mask.sum()
+            if n_passing == 0:
+                continue
+            n_mapped = barcodes[mask].isin(library_set).sum()
+
+            results.append(
+                {
+                    "plate": plate,
+                    "well": well,
+                    "q_threshold": round(thresh, 3),
+                    "mapping_rate": n_mapped / n_passing,
+                    "retention_fraction": n_passing / total,
+                }
+            )
+
+    return pd.DataFrame(results)
+
+
+def plot_panel_j_mapping_vs_quality(data, output_path):
+    """
+    Panel J: Mapping rate (left axis) and retention (right axis) vs Q_min.
+    Dual-axis plot, style matches Panel D/E.
+    """
+    fig, ax1 = plt.subplots(figsize=FIGURE_SIZE)
+    ax2 = ax1.twinx()
+
+    # Per-well thin lines
+    for (plate, well), group in data.groupby(["plate", "well"]):
+        color = PALETTE_DE[plate]
+        ax1.plot(
+            group["q_threshold"],
+            group["mapping_rate"],
+            linewidth=0.8,
+            alpha=0.3,
+            color=color,
+        )
+        ax2.plot(
+            group["q_threshold"],
+            group["retention_fraction"],
+            linewidth=0.8,
+            alpha=0.15,
+            color=color,
+            linestyle="--",
+        )
+
+    # Per-plate averages
+    for plate in PLATES:
+        plate_data = data[data["plate"] == plate]
+        avg = plate_data.groupby("q_threshold")[
+            ["mapping_rate", "retention_fraction"]
+        ].mean()
+        ax1.plot(
+            avg.index,
+            avg["mapping_rate"],
+            linewidth=2.5,
+            color=PALETTE_DE[plate],
+            marker="o",
+            markersize=4,
+            label=f"{plate.replace('P-', 'Plate ')} Mapping",
+        )
+        ax2.plot(
+            avg.index,
+            avg["retention_fraction"],
+            linewidth=2.5,
+            color=PALETTE_DE[plate],
+            marker="s",
+            markersize=4,
+            linestyle="--",
+            label=f"{plate.replace('P-', 'Plate ')} Retention",
+        )
+
+    # Overall averages
+    overall = data.groupby("q_threshold")[
+        ["mapping_rate", "retention_fraction"]
+    ].mean()
+    ax1.plot(
+        overall.index,
+        overall["mapping_rate"],
+        linewidth=3.5,
+        color="black",
+        marker="o",
+        markersize=6,
+        label="Avg Mapping Rate",
+    )
+    ax2.plot(
+        overall.index,
+        overall["retention_fraction"],
+        linewidth=3.5,
+        color="black",
+        marker="s",
+        markersize=6,
+        linestyle="--",
+        label="Avg Retention",
+    )
+
+    ax1.set_xlabel("Read Quality Threshold (Q_min)")
+    ax1.set_ylabel("Mapping Rate (fraction matching library)")
+    ax2.set_ylabel("Fraction of Reads Retained")
+    ax1.set_title("Mapping Rate & Retention vs Read Quality", fontweight="bold")
+
+    ax1.set_ylim(0, 1.05)
+    ax2.set_ylim(0, 1.05)
+
+    # Combined legend
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc="center right", fontsize=8)
+
+    # Keep right spine visible for dual axis
+    ax2.spines["right"].set_visible(True)
+
+    plt.tight_layout()
+    save_figure(fig, output_path)
+    plt.close()
+
+
+# =============================================================================
 # Main
 # =============================================================================
 
@@ -1363,6 +1703,22 @@ def main():
     print("Panel H: Cell retention totals...")
     plot_panel_h_retention_totals(
         retention_data, output_dir / "qc_panel_h_retention_totals.png"
+    )
+
+    # Panel I: Error-corrected prefix matching
+    print("Panel I: Error-corrected prefix matching...")
+    corr_prefix_data, corr_prefix_sets = compute_corrected_prefix_matching(
+        reads_data, library_barcodes
+    )
+    plot_panel_i_corrected_prefix(
+        corr_prefix_data, corr_prefix_sets, output_dir / "qc_panel_i_corrected_prefix.png"
+    )
+
+    # Panel J: Mapping rate & retention vs read quality
+    print("Panel J: Mapping rate & retention vs read quality...")
+    quality_data = compute_mapping_vs_quality(reads_data, library_barcodes)
+    plot_panel_j_mapping_vs_quality(
+        quality_data, output_dir / "qc_panel_j_mapping_vs_quality.png"
     )
 
     print("\n" + "=" * 60)
