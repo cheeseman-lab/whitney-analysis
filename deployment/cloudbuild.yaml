@@ -1,0 +1,43 @@
+steps:
+  # Step 1: Download only the small data from GCS (skip montages)
+  - name: 'gcr.io/cloud-builders/gsutil'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        mkdir -p data/config
+        mkdir -p data/brieflow_output/cluster
+        mkdir -p data/brieflow_output/aggregate/tsvs
+        mkdir -p data/brieflow_output/aggregate/eval
+        mkdir -p data/brieflow_output/preprocess/eval
+        mkdir -p data/brieflow_output/sbs/eval
+        mkdir -p data/brieflow_output/merge/eval
+        mkdir -p data/brieflow_output/phenotype/eval
+        # Config files
+        gsutil cp gs://lasagna-199723-whitney-viz-data/screen.yaml data/
+        gsutil cp gs://lasagna-199723-whitney-viz-data/config/config.yml data/config/
+        # Cluster directory (~578 MB)
+        gsutil -m rsync -r gs://lasagna-199723-whitney-viz-data/brieflow_output/cluster/ data/brieflow_output/cluster/
+        # Aggregate TSVs (~1.8 GB)
+        gsutil -m rsync -r gs://lasagna-199723-whitney-viz-data/brieflow_output/aggregate/tsvs/ data/brieflow_output/aggregate/tsvs/
+        # Aggregate eval
+        gsutil -m rsync -r gs://lasagna-199723-whitney-viz-data/brieflow_output/aggregate/eval/ data/brieflow_output/aggregate/eval/ || true
+        # Eval files from other phases
+        for phase in preprocess sbs merge phenotype; do
+          gsutil -m rsync -r gs://lasagna-199723-whitney-viz-data/brieflow_output/$phase/eval/ data/brieflow_output/$phase/eval/ 2>/dev/null || true
+        done
+        echo "=== Data download complete ==="
+        du -sh data/
+        find data -type f | wc -l
+
+  # Step 2: Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/lasagna-199723/whitney-viz', '.']
+
+images:
+  - 'gcr.io/lasagna-199723/whitney-viz'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  diskSizeGb: 30
+timeout: 1800s

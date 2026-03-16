@@ -1,0 +1,6 @@
+copy_data.sh
+build.sh
+.dockerignore
+*.md
+__pycache__
+*.pyc
