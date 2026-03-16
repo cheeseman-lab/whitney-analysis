@@ -16,6 +16,16 @@ else
     echo "WARNING: GCS mount not available, montages will not be shown"
 fi
 
+# Build file manifest (baked-in data manifest + gcsfuse montages)
+cp /app/data/brieflow_output/.file_manifest /app/merged_data/brieflow_output/.file_manifest
+if [ -d "/gcs_data/brieflow_output/aggregate/montages" ]; then
+    echo "Appending gcsfuse montage paths to manifest..."
+    find /gcs_data/brieflow_output/aggregate/montages -type f \( -name "*.png" -o -name "*.tiff" \) \
+        | sed 's|^/gcs_data/brieflow_output/||' \
+        >> /app/merged_data/brieflow_output/.file_manifest
+    echo "Manifest entries: $(wc -l < /app/merged_data/brieflow_output/.file_manifest)"
+fi
+
 # Start nginx in background
 nginx -g 'daemon off;' &
 

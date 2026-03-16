@@ -25,6 +25,11 @@ RUN git config --global user.email "deploy@whitney-viz" && git config --global u
 # Copy baked-in data (~2.4 GB: cluster, aggregate TSVs, eval files)
 COPY data/ ./data/
 
+# Build file manifest for baked-in data (avoids os.walk at runtime)
+RUN find ./data/brieflow_output -type f \( -name "*.png" -o -name "*.tsv" -o -name "*.tiff" \) \
+    | sed 's|^\./data/brieflow_output/||' > ./data/brieflow_output/.file_manifest \
+    && echo "Manifest entries: $(wc -l < ./data/brieflow_output/.file_manifest)"
+
 # Environment variables
 # BRIEFLOW_OUTPUT_PATH points to a merged view set up by entrypoint
 ENV BRIEFLOW_OUTPUT_PATH=/app/merged_data/brieflow_output/
