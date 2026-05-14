@@ -1,0 +1,55 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies (nginx + git)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    nginx \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy visualization code
+COPY brieflow/visualization/ ./visualization/
+COPY brieflow/workflow/lib/shared/file_utils.py ./workflow/lib/shared/file_utils.py
+
+# Create __init__.py files for the workflow package path
+RUN touch ./workflow/__init__.py ./workflow/lib/__init__.py ./workflow/lib/shared/__init__.py
+
+# Initialize a git repo so the Analysis Overview page doesn't crash
+RUN git config --global user.email "deploy@whitney-viz" && git config --global user.name "deploy" && git init && git add -A && git commit -m "deployment" --allow-empty
+
+# Copy baked-in data (~2.4 GB: cluster, aggregate TSVs, eval files)
+COPY data/ ./data/
+
+# Build file manifest for baked-in data (avoids os.walk at runtime)
+RUN find ./data/brieflow_output -type f \( -name "*.png" -o -name "*.tsv" -o -name "*.tiff" \) \
+    | sed 's|^\./data/brieflow_output/||' > ./data/brieflow_output/.file_manifest \
+    && echo "Manifest entries: $(wc -l < ./data/brieflow_output/.file_manifest)"
+
+# Environment variables
+# BRIEFLOW_OUTPUT_PATH points to a merged view set up by entrypoint
+ENV BRIEFLOW_OUTPUT_PATH=/app/merged_data/brieflow_output/
+ENV CONFIG_PATH=/app/data/config/config.yml
+ENV SCREEN_PATH=/app/data/screen.yaml
+# Enable nginx-served static files
+ENV STATIC_ASSET_URL_ROOT=/dataset_static/
+ENV STATIC_ASSET_PATH=/app/merged_data/brieflow_output/
+
+# Streamlit config (runs on internal port 8501, nginx fronts on 8080)
+RUN mkdir -p /root/.streamlit
+RUN echo '[server]\nheadless = true\nport = 8501\naddress = "127.0.0.1"\nenableCORS = false\nenableXsrfProtection = false\n' > /root/.streamlit/config.toml
+
+# nginx config
+RUN rm -f /etc/nginx/sites-enabled/default
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY entrypoint-nginx.sh .
+RUN chmod +x entrypoint-nginx.sh
+
+EXPOSE 8080
+
+ENTRYPOINT ["./entrypoint-nginx.sh"]
